@@ -1,0 +1,22 @@
+{
+  "name": "cklein",
+  "version": "1.0.0",
+  "description": "aufgabe1",
+  "main": "aufgabe1.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nReinhardt91/WBA2SS16KruschReinhardtKlein.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nReinhardt91/WBA2SS16KruschReinhardtKlein/issues"
+  },
+  "homepage": "https://github.com/nReinhardt91/WBA2SS16KruschReinhardtKlein#readme",
+  "dependencies": {
+    "chalk": "^1.1.3"
+  }
+}
