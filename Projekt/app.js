@@ -36,7 +36,7 @@ app.get('/recipes', function(req, res){
 app.post('/recipe', jsonParser, function(req, res){
     var newRecipe=req.body;
   console.log(newRecipe.name);      // your JSON
-  res.send('Funktioniert' + newRecipe.name);    // echo the result back
+    res.send('Funktioniert ' + newRecipe.name);  // echo the result back
 });
 
 
