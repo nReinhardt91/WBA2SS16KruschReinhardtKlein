@@ -34,9 +34,8 @@ app.get('/recipes', function(req, res){
 //Post
 // URL http://localhost:1337/recipe
 app.post('/recipe', jsonParser, function(req, res){
-    var newRecipe=req.body;
-  console.log(newRecipe.name);      // your JSON
-    res.send('Funktioniert ' + newRecipe.name);  // echo the result back
+    	console.log('request =' + JSON.stringify(req.body));
+	res.send("Funktioniert: " + JSON.stringify(req.body));// echo the result back
 });
 
 
