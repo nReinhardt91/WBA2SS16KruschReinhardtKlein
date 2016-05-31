@@ -1,19 +1,33 @@
 // das Programm hier
 var express= require('express');
 var bodyParser=require('body-parser');
+var redis=require('redis');
+var db=redis.createClient();
 var jsonParser=bodyParser.json();
 
 var app=express();
 app.use(jsonParser);
 var serverPort=1337;
 
-var recipes = [
+
+
+/*var recipes = [
     {name: "Spiegelei", preparation: "Ei in die Pfanne", level: 1},
     {name: "Reis", preparation: "Wasser kochen...", level: 1},
     {name: "Auflauf", preparation: "aufwendig", level: 3}
 ];
-
-
+*/
+/*Anlegen "Grundstock"*/
+int i=0;
+var recipes1={name: "Spiegelei", preparation: "Ei in die Pfanne", level: 1};
+var recipes2={name: "Reis", preparation: "Wasser kochen...", level: 1};
+var recipes3={name: "Auflauf", preparation: "aufwendig", level: 3};
+db.set("recipe"+i, JSON.stringify(req.body)); 
+i++;
+db.set("recipe"+i, JSON.stringify(req.body));
+i++;
+db.set("recipe", JSON.stringify(req.body));
+i++;
 
 //get Methode -> Filtern anhand Schwierigkeitsgrad
 app.get('/recipes', function(req, res){
@@ -34,8 +48,20 @@ app.get('/recipes', function(req, res){
 //Post
 // URL http://localhost:1337/recipe
 app.post('/recipe', jsonParser, function(req, res){
-    	console.log('request =' + JSON.stringify(req.body));
-	res.send("Funktioniert: " + JSON.stringify(req.body));// echo the result back
+    var nameRecipe=req.body.name;
+    var preparationRecipe=req.body.preparation;
+    var levelRecipe=req.body.level;
+    
+    var recipe={};
+    recipe.name=nameRecipe;
+    recipe.preparation=preparationRecipe;
+    recipe.level=levelRecipe;
+    db.set("recipe"+i, JSON.stringify(req.body));
+    db.get("", function(res, req){
+    console.log(req);
+    });
+    //console.log('request =' + JSON.stringify(req.body));
+	res.send("Funktioniert: " + JSON.stringify(req.body));
 });
 
 
