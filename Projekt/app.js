@@ -9,7 +9,7 @@ var app=express();
 app.use(jsonParser);
 var serverPort=1337;
 
-
+var i=4;
 
 /*var recipes = [
     {name: "Spiegelei", preparation: "Ei in die Pfanne", level: 1},
@@ -18,18 +18,9 @@ var serverPort=1337;
 ];
 */
 /*Anlegen "Grundstock"*/
-int i=0;
-var recipes1={name: "Spiegelei", preparation: "Ei in die Pfanne", level: 1};
-var recipes2={name: "Reis", preparation: "Wasser kochen...", level: 1};
-var recipes3={name: "Auflauf", preparation: "aufwendig", level: 3};
-db.set("recipe"+i, JSON.stringify(req.body)); 
-i++;
-db.set("recipe"+i, JSON.stringify(req.body));
-i++;
-db.set("recipe", JSON.stringify(req.body));
-i++;
-
 //get Methode -> Filtern anhand Schwierigkeitsgrad
+
+
 app.get('/recipes', function(req, res){
     
     //Beispiel-URL: http://localhost:1337/recipes?level=1
@@ -40,8 +31,12 @@ app.get('/recipes', function(req, res){
     }
     else {
         //kein Query-Parameter angegeben, dann alle ausgeben
-        res.status(200);
-        res.json(recipes);
+        db.keys("recipe:*", function(res, req){
+            var numberOfRecipes=db.keys()
+            db.get("", function(res, req){
+            console.log(req);
+            });
+        });
     }
 });
 
@@ -56,11 +51,11 @@ app.post('/recipe', jsonParser, function(req, res){
     recipe.name=nameRecipe;
     recipe.preparation=preparationRecipe;
     recipe.level=levelRecipe;
-    db.set("recipe"+i, JSON.stringify(req.body));
-    db.get("", function(res, req){
+    db.set("recipe:"+i, JSON.stringify(req.body));
+    db.get("recipe:"+i, function(res, req){
     console.log(req);
     });
-    //console.log('request =' + JSON.stringify(req.body));
+    i++;
 	res.send("Funktioniert: " + JSON.stringify(req.body));
 });
 
