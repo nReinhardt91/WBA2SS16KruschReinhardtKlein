@@ -22,19 +22,19 @@ var x=0;
 /*REZEPTE*/
 
 /*ein Rezept ausgeben*/
-app.get('/rezepte', function(req, res){
-//Beispiel-URL: http://localhost:1337/recipes?level=1
-    var rezeptName="rezept:"+req.query.id;
-    db.hgetall(rezeptName, function(res, req){
-        console.log(req);
-    });
-    res.send("Funktioniert: " + JSON.stringify(res.body));
-});
+//app.get('/rezepte', function(req, res){
+////Beispiel-URL: http://localhost:1337/recipes?level=1
+//    var rezeptName="rezept:"+req.query.id;
+//    db.hgetall(rezeptName, function(res, req){
+//        console.log(req);
+//    });
+//    res.send("Funktioniert: " + JSON.stringify(res.body));
+//});
 /*Alle Rezept ausgeben*/
 app.get('/rezepte', function(req, res){
 //Beispiel-URL: http://localhost:1337/recipes?level=1
    
-    for (i = 0; i < 10; i++){
+    for (i = 0; i < x; i++){
         var id="rezept:"+i;
         db.hgetall(id, function(res, req){
             console.log(req);
