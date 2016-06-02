@@ -9,7 +9,7 @@ var app=express();
 app.use(jsonParser);
 var serverPort=1337;
 
-var i=4;
+var i=7;
 
 /*var recipes = [
     {name: "Spiegelei", preparation: "Ei in die Pfanne", level: 1},
@@ -19,45 +19,52 @@ var i=4;
 */
 /*Anlegen "Grundstock"*/
 //get Methode -> Filtern anhand Schwierigkeitsgrad
+/*REZEPTE*/
 
-
-app.get('/recipes', function(req, res){
-    
-    //Beispiel-URL: http://localhost:1337/recipes?level=1
-    //request gesetzt, dann ausgeben
-    if (req.query.level!==undefined){
-        res.json(recipes.filter(function(e, i, arr){
-            return e.level == req.query.level}));
-    }
-    else {
-        //kein Query-Parameter angegeben, dann alle ausgeben
-        db.keys("recipe:*", function(res, req){
-            var numberOfRecipes=db.keys()
-            db.get("", function(res, req){
-            console.log(req);
-            });
-        });
-    }
+/*ein Rezept ausgeben*/
+app.get('/rezepte', function(req, res){
+//Beispiel-URL: http://localhost:1337/recipes?level=1
+    var rezeptName="rezept:"+req.query.id;
+    db.hgetall(rezeptName, function(res, req){
+        console.log(req);
+    });
+    res.send("Funktioniert: " + JSON.stringify(res.body));
 });
 
-//Post
+//Rezepte Post
 // URL http://localhost:1337/recipe
-app.post('/recipe', jsonParser, function(req, res){
+app.post('/rezepte', jsonParser, function(req, res){
     var nameRecipe=req.body.name;
     var preparationRecipe=req.body.preparation;
     var levelRecipe=req.body.level;
-    
     var recipe={};
     recipe.name=nameRecipe;
     recipe.preparation=preparationRecipe;
     recipe.level=levelRecipe;
-    db.set("recipe:"+i, JSON.stringify(req.body));
-    db.get("recipe:"+i, function(res, req){
+ /*   db.incr("rezeptid");*/
+    var id="rezept:"+i;
+    db.hmset(id, {"name":recipe.name, "preparation":recipe.preparation, "level":recipe.level});
+    db.hgetall(id, function(res, req){
     console.log(req);
     });
     i++;
 	res.send("Funktioniert: " + JSON.stringify(req.body));
 });
+
+
+
+/*rezepte PUT*/
+
+
+/*rezepte DELETE*/
+//Beispiel-URL: http://localhost:1337/rezepte?id=2
+app.delete('/rezepte', jsonParser, function(req, res){
+   var rezeptName="rezept:"+req.query.id;
+   db.del(rezeptName);
+	res.send("Funktioniert: " + JSON.stringify(req.body));
+
+});
+
 
 
 app.listen(serverPort, function(){
