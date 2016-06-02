@@ -9,7 +9,7 @@ var app=express();
 app.use(jsonParser);
 var serverPort=1337;
 
-var i=7;
+var x=0;
 
 /*var recipes = [
     {name: "Spiegelei", preparation: "Ei in die Pfanne", level: 1},
@@ -30,6 +30,18 @@ app.get('/rezepte', function(req, res){
     });
     res.send("Funktioniert: " + JSON.stringify(res.body));
 });
+/*Alle Rezept ausgeben*/
+app.get('/rezepte', function(req, res){
+//Beispiel-URL: http://localhost:1337/recipes?level=1
+   
+    for (i = 0; i < 10; i++){
+        var id="rezept:"+i;
+        db.hgetall(id, function(res, req){
+            console.log(req);
+        });
+    }
+    res.send("Funktioniert: " + JSON.stringify(req.body));
+});
 
 //Rezepte Post
 // URL http://localhost:1337/recipe
@@ -42,12 +54,12 @@ app.post('/rezepte', jsonParser, function(req, res){
     recipe.preparation=preparationRecipe;
     recipe.level=levelRecipe;
  /*   db.incr("rezeptid");*/
-    var id="rezept:"+i;
+    var id="rezept:"+x;
     db.hmset(id, {"name":recipe.name, "preparation":recipe.preparation, "level":recipe.level});
     db.hgetall(id, function(res, req){
     console.log(req);
     });
-    i++;
+    x++;
 	res.send("Funktioniert: " + JSON.stringify(req.body));
 });
 
