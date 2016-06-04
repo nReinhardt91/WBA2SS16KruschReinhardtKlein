@@ -26,6 +26,8 @@ app.post('/rezepte', function(req, res){
     
 });
 //Einzelnes Rezept ausgeben
+//Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag  
+//wird angezeigt
 app.get('/rezepte/:id', function(req, res){
     
     db.get('rezept:'+req.params.id, function(err, rep){
@@ -82,6 +84,7 @@ app.get('/rezepte', function(req, res){
 
 
 //Rezept löschen
+//Auf DELETE stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag //wurde dann gelöscht
 app.delete('/rezepte/:id', function(req, res){
     
     db.get('rezept:'+req.params.id, function(err, rep){
@@ -97,6 +100,8 @@ app.delete('/rezepte/:id', function(req, res){
     
 });
 //Rezept ändern
+//Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag 
+//bei Body was ändern, Änderung wird dann angezeigt.
 app.put('/rezepte/:id', function(req, res){
     db.exists('rezept:'+req.params.id, function(err, rep) {
         if (rep == 1) {
