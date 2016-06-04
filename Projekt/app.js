@@ -11,6 +11,7 @@ var serverPort=1337;
 
 var x=0;
 
+
 /*var recipes = [
     {name: "Spiegelei", preparation: "Ei in die Pfanne", level: 1},
     {name: "Reis", preparation: "Wasser kochen...", level: 1},
@@ -22,7 +23,7 @@ var x=0;
 /*REZEPTE*/
 
 /*ein Rezept ausgeben*/
-//app.get('/rezepte', function(req, res){
+//app.get('/rezepte:id', function(req, res){
 ////Beispiel-URL: http://localhost:1337/recipes?level=1
 //    var rezeptName="rezept:"+req.query.id;
 //    db.hgetall(rezeptName, function(res, req){
@@ -32,15 +33,15 @@ var x=0;
 //});
 /*Alle Rezept ausgeben*/
 app.get('/rezepte', function(req, res){
-//Beispiel-URL: http://localhost:1337/recipes?level=1
-   
-    for (i = 0; i < x; i++){
-        var id="rezept:"+i;
-        db.hgetall(id, function(res, req){
-            console.log(req);
+///Beispiel-URL: http://localhost:1337/recipes?level=1
+
+ for (i = 1; i <= x; i++){
+       db.hgetall("rezept:"+i, function(res, req){
+           console.log(req);
         });
+      
     }
-    res.send("Funktioniert: " + JSON.stringify(req.body));
+    res.json("http://localhost:1337/rezept:"+i);
 });
 
 //Rezepte Post
@@ -60,6 +61,7 @@ app.post('/rezepte', jsonParser, function(req, res){
     console.log(req);
     });
     x++;
+   
 	res.send("Funktioniert: " + JSON.stringify(req.body));
 });
 
