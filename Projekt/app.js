@@ -3,104 +3,115 @@ var express= require('express');
 var bodyParser=require('body-parser');
 var redis=require('redis');
 var db=redis.createClient();
-var jsonParser=bodyParser.json();
 
 var app=express();
-app.use(jsonParser);
+app.use(bodyParser.json());
 var serverPort=1337;
 
 var x=0;
 
-
-/*var recipes = [
-    {name: "Spiegelei", preparation: "Ei in die Pfanne", level: 1},
-    {name: "Reis", preparation: "Wasser kochen...", level: 1},
-    {name: "Auflauf", preparation: "aufwendig", level: 3}
-];
-*/
-/*Anlegen "Grundstock"*/
-//get Methode -> Filtern anhand Schwierigkeitsgrad
-/*REZEPTE*/
-
-/*ein Rezept ausgeben*/
-//app.get('/rezepte:id', function(req, res){
-////Beispiel-URL: http://localhost:1337/recipes?level=1
-//    var rezeptName="rezept:"+req.query.id;
-//    db.hgetall(rezeptName, function(res, req){
-//        console.log(req);
-//    });
-//    res.send("Funktioniert: " + JSON.stringify(res.body));
-//});
-/*Alle Rezept ausgeben*/
-app.get('/rezepte', function(req, res){
-///Beispiel-URL: http://localhost:1337/recipes?level=1
-
- for (i = 1; i <= x; i++){
-       db.hgetall("rezept:"+i, function(res, req){
-           console.log(req);
+//Rezept hinzufügen
+app.post('/rezepte', function(req, res){
+    
+    var newRezept = req.body;
+    
+    db.incr('id:rezepte', function(err, rep){
+        
+        newRezept.id = rep;
+        
+        db.set('rezept:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
+            res.json(newRezept);
         });
-      
-    }
-    res.json("http://localhost:1337/rezept:"+i);
-});
-
-//Rezepte Post
-// URL http://localhost:1337/recipe
-app.post('/rezepte', jsonParser, function(req, res){
-    var nameRecipe=req.body.name;
-    var preparationRecipe=req.body.preparation;
-    var levelRecipe=req.body.level;
-    var recipe={};
-    recipe.name=nameRecipe;
-    recipe.preparation=preparationRecipe;
-    recipe.level=levelRecipe;
- /*   db.incr("rezeptid");*/
-    var id="rezept:"+x;
-    db.hmset(id, {"name":recipe.name, "preparation":recipe.preparation, "level":recipe.level});
-    db.hgetall(id, function(res, req){
-    console.log(req);
     });
-    x++;
-   
-	res.send("Funktioniert: " + JSON.stringify(req.body));
+    
+});
+//Einzelnes Rezept ausgeben
+app.get('/rezepte/:id', function(req, res){
+    
+    db.get('rezept:'+req.params.id, function(err, rep){
+        if(rep){
+            res.type('json').send(rep);
+        }
+        else{
+            res.status(404).type('text').send('Das Rezept mit der ID ' +req.params.id+' wurde nicht gefunden');
+        }
+    });
+});
+//Nur Beschreibung ausgeben
+//app.get('/rezepte/:id/name', function(req,res){
+//        
+//        db.hget('rezept:'+req.params.id+'/'+req.params.name, function(err, rep){
+//            if(rep){
+//                res.type('json').send(rep);
+//            }
+//            else {
+//                res.status(404).type('text').send('Das Rezept mit dem Namen ' +req.params.name+' wurde nicht gefunden');
+//            }
+//        });
+//
+//        
+//});
+//
+
+
+//Alle Rezepte ausgeben
+app.get('/rezepte', function(req, res){
+    db.keys('rezept:*', function(err, rep){
+        var rezepte = [];
+        
+        if (rep.length == 0) {
+            res.json(rezepte);
+            return;
+        }
+        
+        db.mget(rep, function(err, rep){
+            
+            rep.forEach(function(val){
+                rezepte.push(JSON.parse(val));     
+            });
+            
+            rezepte = rezepte.map(function(rezept){
+                return {id: rezept.id, name: rezept.name};
+            });
+            
+            res.json(rezepte);
+        });
+    });
+    
+});
+
+
+//Rezept löschen
+app.delete('/rezepte/:id', function(req, res){
+    
+    db.get('rezept:'+req.params.id, function(err, rep){
+        if(rep){
+            db.del('rezept:'+req.params.id, function(err, rep){
+                res.type('text').send('Rezept mit der ID '+req.params.id+' wurde gelöscht');
+            });
+        }
+        else {
+            res.status(404).type('text').send('Rezept nicht gefunden');
+        }
+    });
+    
+});
+//Rezept ändern
+app.put('/rezepte/:id', function(req, res){
+    db.exists('rezept:'+req.params.id, function(err, rep) {
+        if (rep == 1) {
+            var updateRezept = req.body;
+            updateRezept.id = req.params.id;
+            db.set('rezept:' + req.params.id, JSON.stringify(updateRezept), function(err, rep){
+                res.json(updateRezept);
+            });
+        }
+        else {
+            res.status(404).type('text').send('Das REzept wurde nicht gefunden');
+        }
+    });
 });
 
 
 
-/*rezepte PUT*/
-
-
-/*rezepte DELETE*/
-//Beispiel-URL: http://localhost:1337/rezepte?id=2
-app.delete('/rezepte', jsonParser, function(req, res){
-   var rezeptName="rezept:"+req.query.id;
-   db.del(rezeptName);
-	res.send("Funktioniert: " + JSON.stringify(req.body));
-
-});
-
-
-
-app.listen(serverPort, function(){
-    console.log('App listens on Port '+serverPort);
-});
-
-
-
-
-//content-negotiation
-/*
-app.get('/', function(req, res){
-var acceptetTypes=req.accepts(['html', 'json']);
-    switch(acceptetTypes){
-    case 'html': 
-            res.type('html').send('<h1>HelloWorld</h1>');
-            break;
-    case 'json':
-            res.json(recipes);
-            break;
-    default: 
-        res.status(406).end();
-    }
-});
-*/
+app.listen(3000);
