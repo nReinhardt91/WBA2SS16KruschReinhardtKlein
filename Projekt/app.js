@@ -6,9 +6,7 @@ var db=redis.createClient();
 
 var app=express();
 app.use(bodyParser.json());
-var serverPort=1337;
 
-var x=0;
 
 //Rezept hinzufügen
 app.post('/rezepte', function(req, res){
@@ -112,11 +110,54 @@ app.put('/rezepte/:id', function(req, res){
             });
         }
         else {
-            res.status(404).type('text').send('Das REzept wurde nicht gefunden');
+            res.status(404).type('text').send('Das Rezept wurde nicht gefunden');
         }
     });
 });
 
+/* ---------------------------------------------WG--------------------------------------- */
+/*GET: gibt eine WG aus*/
+app.get('/wg/:id', function(req, res){
+    
+    db.get('wg:'+req.params.id, function(err, rep){
+        if(rep){
+            res.type('json').send(rep);
+        }
+        else{
+            res.status(404).type('text').send('Die WG mit der ID ' +req.params.id+' wurde nicht gefunden');
+        }
+    });
+});
 
+/*POST: legt eine WG an*/
+app.post('/wg', function(req, res){
+    
+    var newWG = req.body;
+    
+    db.incr('id:wg', function(err, rep){
+        
+        newWG.id = rep;
+        
+        db.set('wg:'+newWG.id, JSON.stringify(newWG), function(err, rep){
+            res.json(newWG);
+        });
+    });
+    
+});
 
+/*DELETE: löscht eine WG*/
+app.put('/wg/:id', function(req, res){
+    db.exists('wg:'+req.params.id, function(err, rep) {
+        if (rep == 1) {
+            var updateWG = req.body;
+            updateWG.id = req.params.id;
+            db.set('wg:' + req.params.id, JSON.stringify(updateWG), function(err, rep){
+                res.json(updateWG);
+            });
+        }
+        else {
+            res.status(404).type('text').send('Die WG wurde nicht gefunden');
+        }
+    });
+});
 app.listen(3000);
