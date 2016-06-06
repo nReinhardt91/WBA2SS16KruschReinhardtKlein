@@ -116,7 +116,8 @@ app.put('/rezepte/:id', function(req, res){
 });
 
 /* ---------------------------------------------WG--------------------------------------- */
-/*GET: gibt eine WG aus*/
+/*GET: gibt eine WG aus --> ID, Name und Strasse*/
+/*  Beispiel URI: http:/localhost:3000/wg/1  */
 app.get('/wg/:id', function(req, res){
     
     db.get('wg:'+req.params.id, function(err, rep){
@@ -130,6 +131,7 @@ app.get('/wg/:id', function(req, res){
 });
 
 /*POST: legt eine WG an*/
+/*  Beispiel: URI http:/localhost:3000/wg */
 app.post('/wg', function(req, res){
     
     var newWG = req.body;
@@ -146,18 +148,20 @@ app.post('/wg', function(req, res){
 });
 
 /*DELETE: löscht eine WG*/
-app.put('/wg/:id', function(req, res){
-    db.exists('wg:'+req.params.id, function(err, rep) {
-        if (rep == 1) {
-            var updateWG = req.body;
-            updateWG.id = req.params.id;
-            db.set('wg:' + req.params.id, JSON.stringify(updateWG), function(err, rep){
-                res.json(updateWG);
+/*  Beispiel: URI http:/localhost:3000/wg/1 */
+app.delete('/wg/:id', function(req, res){
+    
+    db.get('wg:'+req.params.id, function(err, rep){
+        if(rep){
+            db.del('wg:'+req.params.id, function(err, rep){
+                res.type('text').send('WG mit der ID '+req.params.id+' wurde gelöscht');
             });
         }
         else {
-            res.status(404).type('text').send('Die WG wurde nicht gefunden');
+            res.status(404).type('text').send('WG nicht gefunden');
         }
     });
+    
 });
+
 app.listen(3000);
