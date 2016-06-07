@@ -164,4 +164,50 @@ app.delete('/wg/:id', function(req, res){
     
 });
 
+/*-----*/
+/*POST: einer WG eine Einkaufsliste hinzufügen*/
+/*TODO: beendet den Vorgang nicht, legt aber die neue Liste an*/
+app.post('/wg/:id/einkaufsliste', function(req, res){
+    var wgID=parseInt(req.params.id);
+    var newList = req.body;
+        
+    db.incr('id:einkaufsliste', function(err, rep){
+        newList.id = rep;
+        db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
+            res.json(newList);
+        });
+    });    
+});
+
+/*GET: eine Einkaufsliste ausgeben*/
+/*TODO: Ausgabe korrigieren, Name der Liste nicht als Menge aber Zutaten als Menge??*/
+app.get('/wg/:id/einkaufsliste/:listid', function(req, res){
+    var listid=parseInt(req.params.listid);
+        db.exists('einkaufsliste:'+listid, function(err, reply) {
+            if (reply === 1) {
+                db.lrange('einkaufsliste:'+listid, 0, -1, function(req, res){
+                console.log(res);
+                });    
+            } else {
+                console.log('nicht vorhanden');
+            }
+            });     
+});
+
+/*DELETE: eine Einkaufsliste löschen*/
+app.delete('/wg/:id/einkaufsliste/:listid', function(req, res){
+    var listid=parseInt(req.params.listid);
+    db.lrange('einkaufsliste:'+listid, 0, -1, function(req, reply){
+        if(reply){
+            db.del('einkaufsliste:'+listid, function(err, rep){
+                res.type('text').send('Einkaufsliste mit der ID '+listid+' wurde gelöscht');
+            });
+        }
+        else {
+            res.status(404).type('text').send('Einkaufsliste nicht gefunden');
+        }
+    });
+    
+});
+
 app.listen(3000);
