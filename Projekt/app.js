@@ -8,28 +8,29 @@ var app=express();
 app.use(bodyParser.json());
 
 
-//commit test 
+//commit test
+//commit test 2 
 
 //Rezept hinzufügen
 app.post('/rezepte', function(req, res){
-    
+
     var newRezept = req.body;
-    
+
     db.incr('id:rezepte', function(err, rep){
-        
+
         newRezept.id = rep;
-        
+
         db.set('rezept:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
             res.json(newRezept);
         });
     });
-    
+
 });
 //Einzelnes Rezept ausgeben
-//Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag  
+//Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag
 //wird angezeigt
 app.get('/rezepte/:id', function(req, res){
-    
+
     db.get('rezept:'+req.params.id, function(err, rep){
         if(rep){
             res.type('json').send(rep);
@@ -41,7 +42,7 @@ app.get('/rezepte/:id', function(req, res){
 });
 //Nur Beschreibung ausgeben
 //app.get('/rezepte/:id/name', function(req,res){
-//        
+//
 //        db.hget('rezept:'+req.params.id+'/'+req.params.name, function(err, rep){
 //            if(rep){
 //                res.type('json').send(rep);
@@ -51,7 +52,7 @@ app.get('/rezepte/:id', function(req, res){
 //            }
 //        });
 //
-//        
+//
 //});
 //
 
@@ -60,33 +61,33 @@ app.get('/rezepte/:id', function(req, res){
 app.get('/rezepte', function(req, res){
     db.keys('rezept:*', function(err, rep){
         var rezepte = [];
-        
+
         if (rep.length == 0) {
             res.json(rezepte);
             return;
         }
-        
+
         db.mget(rep, function(err, rep){
-            
+
             rep.forEach(function(val){
-                rezepte.push(JSON.parse(val));     
+                rezepte.push(JSON.parse(val));
             });
-            
+
             rezepte = rezepte.map(function(rezept){
                 return {id: rezept.id, name: rezept.name};
             });
-            
+
             res.json(rezepte);
         });
     });
-    
+
 });
 
 
 //Rezept löschen
 //Auf DELETE stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag //wurde dann gelöscht
 app.delete('/rezepte/:id', function(req, res){
-    
+
     db.get('rezept:'+req.params.id, function(err, rep){
         if(rep){
             db.del('rezept:'+req.params.id, function(err, rep){
@@ -97,10 +98,10 @@ app.delete('/rezepte/:id', function(req, res){
             res.status(404).type('text').send('Rezept nicht gefunden');
         }
     });
-    
+
 });
 //Rezept ändern
-//Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag 
+//Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag
 //bei Body was ändern, Änderung wird dann angezeigt.
 app.put('/rezepte/:id', function(req, res){
     db.exists('rezept:'+req.params.id, function(err, rep) {
@@ -121,7 +122,7 @@ app.put('/rezepte/:id', function(req, res){
 /*GET: gibt eine WG aus --> ID, Name und Strasse*/
 /*  Beispiel URI: http:/localhost:3000/wg/1  */
 app.get('/wg/:id', function(req, res){
-    
+
     db.get('wg:'+req.params.id, function(err, rep){
         if(rep){
             res.type('json').send(rep);
@@ -135,24 +136,24 @@ app.get('/wg/:id', function(req, res){
 /*POST: legt eine WG an*/
 /*  Beispiel: URI http:/localhost:3000/wg */
 app.post('/wg', function(req, res){
-    
+
     var newWG = req.body;
-    
+
     db.incr('id:wg', function(err, rep){
-        
+
         newWG.id = rep;
-        
+
         db.set('wg:'+newWG.id, JSON.stringify(newWG), function(err, rep){
             res.json(newWG);
         });
     });
-    
+
 });
 
 /*DELETE: löscht eine WG*/
 /*  Beispiel: URI http:/localhost:3000/wg/1 */
 app.delete('/wg/:id', function(req, res){
-    
+
     db.get('wg:'+req.params.id, function(err, rep){
         if(rep){
             db.del('wg:'+req.params.id, function(err, rep){
@@ -163,7 +164,7 @@ app.delete('/wg/:id', function(req, res){
             res.status(404).type('text').send('WG nicht gefunden');
         }
     });
-    
+
 });
 
 /*-----*/
@@ -172,13 +173,13 @@ app.delete('/wg/:id', function(req, res){
 app.post('/wg/:id/einkaufsliste', function(req, res){
     var wgID=parseInt(req.params.id);
     var newList = req.body;
-        
+
     db.incr('id:einkaufsliste', function(err, rep){
         newList.id = rep;
         db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
             res.json(newList);
         });
-    });    
+    });
 });
 
 /*GET: eine Einkaufsliste ausgeben*/
@@ -189,11 +190,11 @@ app.get('/wg/:id/einkaufsliste/:listid', function(req, res){
             if (reply === 1) {
                 db.lrange('einkaufsliste:'+listid, 0, -1, function(req, res){
                 console.log(res);
-                });    
+                });
             } else {
                 console.log('nicht vorhanden');
             }
-            });     
+            });
 });
 
 /*DELETE: eine Einkaufsliste löschen*/
@@ -209,7 +210,7 @@ app.delete('/wg/:id/einkaufsliste/:listid', function(req, res){
             res.status(404).type('text').send('Einkaufsliste nicht gefunden');
         }
     });
-    
+
 });
 
 app.listen(3000);
