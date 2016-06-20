@@ -7,6 +7,7 @@ var db=redis.createClient();
 var app=express();
 app.use(bodyParser.json());
 
+var uri;
 
 //commit test
 //commit test 2 
@@ -19,9 +20,9 @@ app.post('/rezepte', function(req, res){
     db.incr('id:rezepte', function(err, rep){
 
         newRezept.id = rep;
-
+        uri="http://localhost:3000/rezepte/"+newRezept.id;
         db.set('rezept:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
-            res.json(newRezept);
+            res.send(uri);
         });
     });
 
@@ -59,6 +60,7 @@ app.get('/rezepte/:id', function(req, res){
 
 //Alle Rezepte ausgeben
 app.get('/rezepte', function(req, res){
+    
     db.keys('rezept:*', function(err, rep){
         var rezepte = [];
 
@@ -66,18 +68,25 @@ app.get('/rezepte', function(req, res){
             res.json(rezepte);
             return;
         }
-
+        var uris=[];
+        var rid=rep;
+       /* rep.forEach(function(err, test){
+            uris.push("http://localhost:3000/rezepte/"+rep.id);
+        });*/
+        
         db.mget(rep, function(err, rep){
-
+            
             rep.forEach(function(val){
                 rezepte.push(JSON.parse(val));
+                uris.push("http://localhost:3000/rezepte/"+rid.filter(id));
+                
             });
 
             rezepte = rezepte.map(function(rezept){
                 return {id: rezept.id, name: rezept.name};
+                
             });
-
-            res.json(rezepte);
+            res.json(rezepturi);
         });
     });
 
@@ -142,9 +151,9 @@ app.post('/wg', function(req, res){
     db.incr('id:wg', function(err, rep){
 
         newWG.id = rep;
-
+        uri="http://localhost:3000/wg/"+newWG.id;
         db.set('wg:'+newWG.id, JSON.stringify(newWG), function(err, rep){
-            res.json(newWG);
+            res.send(uri);
         });
     });
 
@@ -176,6 +185,7 @@ app.post('/wg/:id/einkaufsliste', function(req, res){
 
     db.incr('id:einkaufsliste', function(err, rep){
         newList.id = rep;
+        
         db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
             res.json(newList);
         });
