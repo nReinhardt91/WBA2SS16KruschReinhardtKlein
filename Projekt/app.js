@@ -2,6 +2,7 @@
 var express= require('express');
 var bodyParser=require('body-parser');
 var redis=require('redis');
+
 var db=redis.createClient();
 
 var app=express();
@@ -9,8 +10,6 @@ app.use(bodyParser.json());
 
 var uri;
 
-//commit test
-//commit test 2 
 
 //Rezept hinzufügen
 app.post('/rezepte', function(req, res){
@@ -78,7 +77,7 @@ app.get('/rezepte', function(req, res){
             
             rep.forEach(function(val){
                 rezepte.push(JSON.parse(val));
-                uris.push("http://localhost:3000/rezepte/"+rid.filter(id));
+                uris.push("http://localhost:3000/rezepte/");
                 
             });
 
@@ -127,7 +126,8 @@ app.put('/rezepte/:id', function(req, res){
     });
 });
 
-/* ---------------------------------------------WG--------------------------------------- */
+/*----------------------------------------*/
+/*-----------------WG---------------------*/
 /*GET: gibt eine WG aus --> ID, Name und Strasse*/
 /*  Beispiel URI: http:/localhost:3000/wg/1  */
 app.get('/wg/:id', function(req, res){
@@ -223,4 +223,121 @@ app.delete('/wg/:id/einkaufsliste/:listid', function(req, res){
 
 });
 
+/*----------------------------------------*/
+/*----------------Zutat-------------------*/
+
+//Zutat hinzufügen
+app.post('/zutat', function(req, res){
+
+    var newZutat = req.body;
+
+    db.incr('id:zutat', function(err, rep){
+
+        newZutat.id = rep;
+        uri="http://localhost:3000/zutat/"+newZutat.id;
+        db.set('zutat:'+newZutat.id, JSON.stringify(newZutat), function(err, rep){
+            res.send(uri);
+        });
+    });
+
+});
+//Einzelne Zutat ausgeben
+//Auf PUT stellen und oben http:/localhost:3000/zutat/ <-- hier die ID eintragen bsp(http:/localhost:3000/zutat/2) Eintrag
+//wird angezeigt
+app.get('/zutat/:id', function(req, res){
+
+    db.get('zutat:'+req.params.id, function(err, rep){
+        if(rep){
+            res.type('json').send(rep);
+        }
+        else{
+            res.status(404).type('text').send('Die Zutat mit der ID ' +req.params.id+' wurde nicht gefunden');
+        }
+    });
+});
+//Nur Beschreibung ausgeben
+//app.get('/rezepte/:id/name', function(req,res){
+//
+//        db.hget('rezept:'+req.params.id+'/'+req.params.name, function(err, rep){
+//            if(rep){
+//                res.type('json').send(rep);
+//            }
+//            else {
+//                res.status(404).type('text').send('Das Rezept mit dem Namen ' +req.params.name+' wurde nicht gefunden');
+//            }
+//        });
+//
+//
+//});
+//
+
+
+//Alle Zutaten ausgeben
+app.get('/zutat', function(req, res){
+    
+    db.keys('zutat:*', function(err, rep){
+        var zutaten = [];
+
+        if (rep.length == 0) {
+            res.json(rezepte);
+            return;
+        }
+        var uris=[];
+        var rid=rep;
+       /* rep.forEach(function(err, test){
+            uris.push("http://localhost:3000/rezepte/"+rep.id);
+        });*/
+        
+        db.mget(rep, function(err, rep){
+            
+            rep.forEach(function(val){
+                zutaten.push(JSON.parse(val));
+                uris.push("http://localhost:3000/zutat/");
+                
+            });
+
+            zutaten = zutaten.map(function(rezept){
+                return {id: zutaten.id, name: zutaten.name};
+                
+            });
+            res.json(uris);
+        });
+    });
+
+});
+
+
+//Zutat löschen
+//Auf DELETE stellen und oben http:/localhost:3000/zutat/ <-- hier die ID eintragen bsp(http:/localhost:3000/zutat/2) Eintrag //wurde dann gelöscht
+app.delete('/zutat/:id', function(req, res){
+
+    db.get('zutat:'+req.params.id, function(err, rep){
+        if(rep){
+            db.del('zutat:'+req.params.id, function(err, rep){
+                res.type('text').send('Zutat mit der ID '+req.params.id+' wurde gelöscht');
+            });
+        }
+        else {
+            res.status(404).type('text').send('Zutat nicht gefunden');
+        }
+    });
+
+});
+//Zutat ändern
+//Auf PUT stellen und oben http:/localhost:3000/zutat/ <-- hier die ID eintragen bsp(http:/localhost:3000/zutat/2) Eintrag
+//bei Body was ändern, Änderung wird dann angezeigt.
+app.put('/zutat/:id', function(req, res){
+    db.exists('zutat:'+req.params.id, function(err, rep) {
+        if (rep == 1) {
+            var updateZutat = req.body;
+            updateZutat.id = req.params.id;
+            db.set('zutat:' + req.params.id, JSON.stringify(updateZutat), function(err, rep){
+                res.json(updateZutat);
+            });
+        }
+        else {
+            res.status(404).type('text').send('Die Zutat wurde nicht gefunden');
+        }
+    });
+});
 app.listen(3000);
