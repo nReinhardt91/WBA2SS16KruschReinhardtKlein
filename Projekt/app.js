@@ -59,7 +59,7 @@ app.get('/rezepte/:id', function(req, res){
 
 //Alle Rezepte ausgeben
 app.get('/rezepte', function(req, res){
-    
+
     db.keys('rezept:*', function(err, rep){
         var rezepte = [];
 
@@ -68,24 +68,25 @@ app.get('/rezepte', function(req, res){
             return;
         }
         var uris=[];
-        var rid=rep;
        /* rep.forEach(function(err, test){
             uris.push("http://localhost:3000/rezepte/"+rep.id);
         });*/
-        
+
         db.mget(rep, function(err, rep){
-            
+
             rep.forEach(function(val){
+                _json = JSON.parse(val);
                 rezepte.push(JSON.parse(val));
-                uris.push("http://localhost:3000/rezepte/");
-                
+                uris.push("http://localhost:3000/rezepte/"+_json.id);
+
             });
 
             rezepte = rezepte.map(function(rezept){
                 return {id: rezept.id, name: rezept.name};
-                
-            });
-            res.json(rezepturi);
+                return(uris);
+
+                  });
+            res.json(uris);
         });
     });
 
@@ -185,7 +186,7 @@ app.post('/wgs/:id/einkaufsliste', function(req, res){
 
     db.incr('id:einkaufsliste', function(err, rep){
         newList.id = rep;
-        
+
         db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
             res.json(newList);
         });
@@ -274,7 +275,7 @@ app.get('/zutaten/:id', function(req, res){
 
 //Alle Zutaten ausgeben
 app.get('/zutaten', function(req, res){
-    
+
     db.keys('zutaten:*', function(err, rep){
         var zutaten = [];
 
@@ -287,18 +288,18 @@ app.get('/zutaten', function(req, res){
        /* rep.forEach(function(err, test){
             uris.push("http://localhost:3000/rezepte/"+rep.id);
         });*/
-        
+
         db.mget(rep, function(err, rep){
-            
+
             rep.forEach(function(val){
                 zutaten.push(JSON.parse(val));
                 uris.push("http://localhost:3000/zutaten/");
-                
+
             });
 
             zutaten = zutaten.map(function(rezept){
                 return {id: zutaten.id, name: zutaten.name};
-                
+
             });
             res.json(uris);
         });
