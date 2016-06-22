@@ -227,14 +227,26 @@ app.post('/wgs/:id/einkaufsliste', function(req, res){
     
     db.incr('id:einkaufsliste', function(err, rep){
         newList.id = rep;
-<<<<<<< HEAD
         var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste"+newList.id;
-=======
-
->>>>>>> a55c278d70ad0d1ba327d72eb3ed2f3b382dda67
         db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
             res.json(uri);
         });
+    });
+});
+
+app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
+    
+    db.exists('einkaufsliste:'+req.params.listid, function(err, rep) {
+        if (rep == 1) {
+            var updateListe = req.body;
+            updateListe.id = req.params.listid;
+            db.set('einkaufsliste:' + req.params.id, JSON.stringify(updateListe), function(err, rep){
+                res.json(updateListe);
+            });
+        }
+        else {
+            res.status(404).type('text').send('Die Liste wurde nicht gefunden');
+        }
     });
 });
 
@@ -246,11 +258,13 @@ app.get('/wgs/:id/einkaufsliste/:listid', function(req, res){
             if (reply === 1) {
                 db.lrange('einkaufsliste:'+listid, 0, -1, function(req, res){
                 console.log(res);
+                
                 });
             } else {
                 console.log('nicht vorhanden');
             }
-            });
+            res.type('text').send("Siehe Konsole");
+        });
 });
 
 /*DELETE: eine Einkaufsliste löschen*/
