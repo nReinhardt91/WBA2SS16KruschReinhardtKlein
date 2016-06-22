@@ -24,14 +24,13 @@ app.post('/rezepte', function(req, res){
             res.send(uri);
         });
     });
-
 });
 //Einzelnes Rezept ausgeben
 //Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag
 //wird angezeigt
 app.get('/rezepte/:id', function(req, res){
-
-    db.get('rezept:'+req.params.id, function(err, rep){
+    
+    db.get('rezepte:'+req.params.id, function(err, rep){
         if(rep){
             res.type('json').send(rep);
         }
@@ -96,9 +95,9 @@ app.get('/rezepte', function(req, res){
 //Auf DELETE stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag //wurde dann gelöscht
 app.delete('/rezepte/:id', function(req, res){
 
-    db.get('rezept:'+req.params.id, function(err, rep){
+    db.get('rezepte:'+req.params.id, function(err, rep){
         if(rep){
-            db.del('rezept:'+req.params.id, function(err, rep){
+            db.del('rezepte:'+req.params.id, function(err, rep){
                 res.type('text').send('Rezept mit der ID '+req.params.id+' wurde gelöscht');
             });
         }
@@ -112,11 +111,11 @@ app.delete('/rezepte/:id', function(req, res){
 //Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag
 //bei Body was ändern, Änderung wird dann angezeigt.
 app.put('/rezepte/:id', function(req, res){
-    db.exists('rezept:'+req.params.id, function(err, rep) {
+    db.exists('rezepte:'+req.params.id, function(err, rep) {
         if (rep == 1) {
             var updateRezept = req.body;
             updateRezept.id = req.params.id;
-            db.set('rezept:' + req.params.id, JSON.stringify(updateRezept), function(err, rep){
+            db.set('rezepte:' + req.params.id, JSON.stringify(updateRezept), function(err, rep){
                 res.json(updateRezept);
             });
         }
@@ -124,6 +123,48 @@ app.put('/rezepte/:id', function(req, res){
             res.status(404).type('text').send('Das Rezept wurde nicht gefunden');
         }
     });
+});
+/*----------------------------------------*/
+/*------------Zutatenliste----------------*/
+app.post('/rezepte/:id/zutatenliste', function(req, res){
+    var listid=parseInt(req.params.id);
+    var newList = req.body;
+    var neueID="zutatenliste:"+listid;
+    var uri="http://localhost:3000/rezepte/"+listid+"/zutatenliste";
+    db.rpush(neueID, JSON.stringify(newList), function(err, rep){
+            res.json(uri);
+    });
+});
+
+app.get('/rezepte/:id/zutatenliste', function(req, res){
+    var listid=parseInt(req.params.id);
+        db.exists('zutatenliste:'+listid, function(err, reply) {
+            if (reply === 1) {
+                db.lrange('zutatenliste:'+listid, 0, -1, function(requ, resp){
+                console.log(resp);
+                res.status(200).json(resp);
+                });
+            } else {
+                
+                console.log('nicht vorhanden');
+                res.status(404).type('text').send("Zutatenliste existiert nicht");
+            }
+            });
+});
+
+app.delete('/rezepte/:id/zutatenliste', function(req, res){
+    var listid=parseInt(req.params.id);
+    db.lrange('zutatenliste:'+listid, 0, -1, function(req, reply){
+        if(reply){
+            db.del('zutatenliste:'+listid, function(err, rep){
+                res.type('text').send('Zutatenliste mit der ID '+listid+' wurde gelöscht');
+            });
+        }
+        else {
+            res.status(404).type('text').send('Zutatenliste nicht gefunden');
+        }
+    });
+
 });
 
 /*----------------------------------------*/
@@ -182,12 +223,12 @@ app.delete('/wgs/:id', function(req, res){
 app.post('/wgs/:id/einkaufsliste', function(req, res){
     var wgID=parseInt(req.params.id);
     var newList = req.body;
-
+    
     db.incr('id:einkaufsliste', function(err, rep){
         newList.id = rep;
-        
+        var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste"+newList.id;
         db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
-            res.json(newList);
+            res.json(uri);
         });
     });
 });
