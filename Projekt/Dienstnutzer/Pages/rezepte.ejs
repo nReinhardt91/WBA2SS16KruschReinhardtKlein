@@ -7,45 +7,14 @@
    
 </head>
 
-<body class="container">
+<body>
 
-    <header>
+    <h1>Rezepte</h1>
+    <ul>
+
         
-    </header>
-
-    <main>
-
-        <div class="panel panel-default main-panel ">
-            <section>
-                <div class="container-fluid">
-                    <div class="row">
-                       
-                        <div class="col-sm-5">
-                            <h3>Zutaten:</h3>
-                            <div class="rezept-zutaten"><%= rezept.zutaten%></div>
-                            <h3>Beschreibung:</h3>
-                            <div class="video-tags">
-                                <input type="text" value="<%= video.tags%>" data-role="tagsinput" disabled="disabled"/>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 button-bar">
-                            <div class="buttonbar">
-                                <button type="button" class="btn btn-success" id="btn-edit">Bearbeiten</button>
-                                <button type="button" class="btn btn-success" id="btn-delete">Löschen</button>
-                            </div>
-                        </div>
-                    </div>
-                    <%}%>
-                </div>
-            </section>
-            
-
-
-    </main>
-
+      <li> <%= rezeptedata%> </li> 
+    </ul>
 </body>
 
 </html>
