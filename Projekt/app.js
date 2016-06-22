@@ -130,9 +130,9 @@ app.put('/rezepte/:id', function(req, res){
 /*-----------------WG---------------------*/
 /*GET: gibt eine WG aus --> ID, Name und Strasse*/
 /*  Beispiel URI: http:/localhost:3000/wg/1  */
-app.get('/wg/:id', function(req, res){
+app.get('/wgs/:id', function(req, res){
 
-    db.get('wg:'+req.params.id, function(err, rep){
+    db.get('wgs:'+req.params.id, function(err, rep){
         if(rep){
             res.type('json').send(rep);
         }
@@ -144,15 +144,15 @@ app.get('/wg/:id', function(req, res){
 
 /*POST: legt eine WG an*/
 /*  Beispiel: URI http:/localhost:3000/wg */
-app.post('/wg', function(req, res){
+app.post('/wgs', function(req, res){
 
     var newWG = req.body;
 
-    db.incr('id:wg', function(err, rep){
+    db.incr('id:wgs', function(err, rep){
 
         newWG.id = rep;
-        uri="http://localhost:3000/wg/"+newWG.id;
-        db.set('wg:'+newWG.id, JSON.stringify(newWG), function(err, rep){
+        uri="http://localhost:3000/wgs/"+newWG.id;
+        db.set('wgs:'+newWG.id, JSON.stringify(newWG), function(err, rep){
             res.send(uri);
         });
     });
@@ -161,11 +161,11 @@ app.post('/wg', function(req, res){
 
 /*DELETE: löscht eine WG*/
 /*  Beispiel: URI http:/localhost:3000/wg/1 */
-app.delete('/wg/:id', function(req, res){
+app.delete('/wgs/:id', function(req, res){
 
-    db.get('wg:'+req.params.id, function(err, rep){
+    db.get('wgs:'+req.params.id, function(err, rep){
         if(rep){
-            db.del('wg:'+req.params.id, function(err, rep){
+            db.del('wgs:'+req.params.id, function(err, rep){
                 res.type('text').send('WG mit der ID '+req.params.id+' wurde gelöscht');
             });
         }
@@ -179,7 +179,7 @@ app.delete('/wg/:id', function(req, res){
 /*-----*/
 /*POST: einer WG eine Einkaufsliste hinzufügen*/
 /*TODO: beendet den Vorgang nicht, legt aber die neue Liste an*/
-app.post('/wg/:id/einkaufsliste', function(req, res){
+app.post('/wgs/:id/einkaufsliste', function(req, res){
     var wgID=parseInt(req.params.id);
     var newList = req.body;
 
@@ -194,7 +194,7 @@ app.post('/wg/:id/einkaufsliste', function(req, res){
 
 /*GET: eine Einkaufsliste ausgeben*/
 /*TODO: Ausgabe korrigieren, Name der Liste nicht als Menge aber Zutaten als Menge??*/
-app.get('/wg/:id/einkaufsliste/:listid', function(req, res){
+app.get('/wgs/:id/einkaufsliste/:listid', function(req, res){
     var listid=parseInt(req.params.listid);
         db.exists('einkaufsliste:'+listid, function(err, reply) {
             if (reply === 1) {
@@ -208,7 +208,7 @@ app.get('/wg/:id/einkaufsliste/:listid', function(req, res){
 });
 
 /*DELETE: eine Einkaufsliste löschen*/
-app.delete('/wg/:id/einkaufsliste/:listid', function(req, res){
+app.delete('/wgs/:id/einkaufsliste/:listid', function(req, res){
     var listid=parseInt(req.params.listid);
     db.lrange('einkaufsliste:'+listid, 0, -1, function(req, reply){
         if(reply){
@@ -227,15 +227,15 @@ app.delete('/wg/:id/einkaufsliste/:listid', function(req, res){
 /*----------------Zutat-------------------*/
 
 //Zutat hinzufügen
-app.post('/zutat', function(req, res){
+app.post('/zutaten', function(req, res){
 
     var newZutat = req.body;
 
-    db.incr('id:zutat', function(err, rep){
+    db.incr('id:zutaten', function(err, rep){
 
         newZutat.id = rep;
-        uri="http://localhost:3000/zutat/"+newZutat.id;
-        db.set('zutat:'+newZutat.id, JSON.stringify(newZutat), function(err, rep){
+        uri="http://localhost:3000/zutaten/"+newZutat.id;
+        db.set('zutaten:'+newZutat.id, JSON.stringify(newZutat), function(err, rep){
             res.send(uri);
         });
     });
@@ -244,9 +244,9 @@ app.post('/zutat', function(req, res){
 //Einzelne Zutat ausgeben
 //Auf PUT stellen und oben http:/localhost:3000/zutat/ <-- hier die ID eintragen bsp(http:/localhost:3000/zutat/2) Eintrag
 //wird angezeigt
-app.get('/zutat/:id', function(req, res){
+app.get('/zutaten/:id', function(req, res){
 
-    db.get('zutat:'+req.params.id, function(err, rep){
+    db.get('zutaten:'+req.params.id, function(err, rep){
         if(rep){
             res.type('json').send(rep);
         }
@@ -273,13 +273,13 @@ app.get('/zutat/:id', function(req, res){
 
 
 //Alle Zutaten ausgeben
-app.get('/zutat', function(req, res){
+app.get('/zutaten', function(req, res){
     
-    db.keys('zutat:*', function(err, rep){
+    db.keys('zutaten:*', function(err, rep){
         var zutaten = [];
 
         if (rep.length == 0) {
-            res.json(rezepte);
+            res.json(zutaten);
             return;
         }
         var uris=[];
@@ -292,7 +292,7 @@ app.get('/zutat', function(req, res){
             
             rep.forEach(function(val){
                 zutaten.push(JSON.parse(val));
-                uris.push("http://localhost:3000/zutat/");
+                uris.push("http://localhost:3000/zutaten/");
                 
             });
 
@@ -309,11 +309,11 @@ app.get('/zutat', function(req, res){
 
 //Zutat löschen
 //Auf DELETE stellen und oben http:/localhost:3000/zutat/ <-- hier die ID eintragen bsp(http:/localhost:3000/zutat/2) Eintrag //wurde dann gelöscht
-app.delete('/zutat/:id', function(req, res){
+app.delete('/zutaten/:id', function(req, res){
 
-    db.get('zutat:'+req.params.id, function(err, rep){
+    db.get('zutaten:'+req.params.id, function(err, rep){
         if(rep){
-            db.del('zutat:'+req.params.id, function(err, rep){
+            db.del('zutaten:'+req.params.id, function(err, rep){
                 res.type('text').send('Zutat mit der ID '+req.params.id+' wurde gelöscht');
             });
         }
@@ -326,12 +326,12 @@ app.delete('/zutat/:id', function(req, res){
 //Zutat ändern
 //Auf PUT stellen und oben http:/localhost:3000/zutat/ <-- hier die ID eintragen bsp(http:/localhost:3000/zutat/2) Eintrag
 //bei Body was ändern, Änderung wird dann angezeigt.
-app.put('/zutat/:id', function(req, res){
-    db.exists('zutat:'+req.params.id, function(err, rep) {
+app.put('/zutaten/:id', function(req, res){
+    db.exists('zutaten:'+req.params.id, function(err, rep) {
         if (rep == 1) {
             var updateZutat = req.body;
             updateZutat.id = req.params.id;
-            db.set('zutat:' + req.params.id, JSON.stringify(updateZutat), function(err, rep){
+            db.set('zutaten:' + req.params.id, JSON.stringify(updateZutat), function(err, rep){
                 res.json(updateZutat);
             });
         }
