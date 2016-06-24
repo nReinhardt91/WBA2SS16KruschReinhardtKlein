@@ -10,6 +10,23 @@ app.use(bodyParser.json());
 
 var uri;
 
+//testen
+app.post('/addRezept', function(req, res){
+
+    var newRezept = req.body;
+
+    db.incr('id:rezepte', function(err, rep){
+
+        newRezept.id = rep;
+        db.set('rezepte:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
+            console.log(newRezept.name);
+            res.status(201).json(newRezept);
+        });
+    });
+});
+
+
+
 
 //Rezept hinzufügen
 app.post('/rezepte', function(req, res){
@@ -20,7 +37,7 @@ app.post('/rezepte', function(req, res){
 
         newRezept.id = rep;
         uri="http://localhost:3000/rezepte/"+newRezept.id;
-        db.set('rezept:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
+        db.set('rezepte:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
             res.send(uri);
         });
     });
@@ -32,34 +49,20 @@ app.get('/rezepte/:id', function(req, res){
     
     db.get('rezepte:'+req.params.id, function(err, rep){
         if(rep){
-            res.type('json').send(rep);
+            res.status(200).type('json').send(rep);
         }
         else{
             res.status(404).type('text').send('Das Rezept mit der ID ' +req.params.id+' wurde nicht gefunden');
         }
     });
 });
-//Nur Beschreibung ausgeben
-//app.get('/rezepte/:id/name', function(req,res){
-//
-//        db.hget('rezept:'+req.params.id+'/'+req.params.name, function(err, rep){
-//            if(rep){
-//                res.type('json').send(rep);
-//            }
-//            else {
-//                res.status(404).type('text').send('Das Rezept mit dem Namen ' +req.params.name+' wurde nicht gefunden');
-//            }
-//        });
-//
-//
-//});
-//
+
 
 
 //Alle Rezepte ausgeben
 app.get('/rezepte', function(req, res){
 
-    db.keys('rezept:*', function(err, rep){
+    db.keys('rezepte:*', function(err, rep){
         var rezepte = [];
 
         if (rep.length == 0) {
@@ -67,22 +70,17 @@ app.get('/rezepte', function(req, res){
             return;
         }
         var uris=[];
-       /* rep.forEach(function(err, test){
-            uris.push("http://localhost:3000/rezepte/"+rep.id);
-        });*/
 
         db.mget(rep, function(err, rep){
 
             rep.forEach(function(val){
                 _json = JSON.parse(val);
                 rezepte.push(JSON.parse(val));
-                uris.push("http://localhost:3000/rezepte/"+_json.id);
-
+        uris.push({"uri": "http://localhost:3001/rezepte/"+_json.id, "name": _json.name});
             });
 
             rezepte = rezepte.map(function(rezept){
-                return {id: rezept.id, name: rezept.name};
-                return(uris);
+                return {id: rezept.id, name: rezept.name, uris};
 
                   });
             res.json(uris);
@@ -99,12 +97,14 @@ app.delete('/rezepte/:id', function(req, res){
     db.get('rezepte:'+req.params.id, function(err, rep){
         if(rep){
             db.del('rezepte:'+req.params.id, function(err, rep){
-                res.type('text').send('Rezept mit der ID '+req.params.id+' wurde gelöscht');
-            });
-        }
+                if (rep==1){
+                res.status(200).type('text').send('Rezept geloescht');
+                }
         else {
             res.status(404).type('text').send('Rezept nicht gefunden');
         }
+        });
+    }
     });
 
 });
