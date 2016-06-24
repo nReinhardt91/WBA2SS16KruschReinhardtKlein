@@ -1,0 +1,79 @@
+<html>
+	<head>
+        
+		<title>Ein Rezept hinzufuegen</title>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">  </script>
+   <script>
+      $(neu).ready(function(){
+        var name,preparation;
+        $("#submit").click(function(){
+          name=$("#name").val();
+          preparation=$("#description").val();
+          $.post("http://localhost:3000/rezepte",{name: name,preparation: preparation}, function(data){
+            if(data==='done')
+              {
+                alert("login success");
+              }
+          });
+        });
+      });
+    </script>
+    </head>
+    <body>
+    <h1>Add Rezept</h1>
+		<hr>
+		<form id="neu" name="rezeptForm" action="http://localhost:3001/rezepte" method="post">
+            <p>Rezept Name:</p>
+            <input type="text" id="name" name="name"></br>
+            <p>Zubereitung:</p>
+            <textarea id="description"  name="description"></textarea> 
+			<p>Level:</br>
+    <label for="1">1</label><input type="radio" name="level" id="1" value="1"><br>
+    <label for="2">2</label><input type="radio" name="level" id="2" value="2"><br> 
+    <label for="3">3</label><input type="radio" name="level" id="3" value="3"><br> 
+			<br></br>
+			<input id="submit" type="submit" value="Create">	
+        </form>
+        <a href="http://localhost:3001/rezepte"> Zurueck</a>
+	</body>
+</html>
+
+
+
+
+<!--
+<html>
+	<head>
+		<title>Ein Rezept hinzufuegen</title>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">  </script>
+    <script>
+      $(document).ready(function(){
+        var name,preparation;
+        $("#submit").click(function(){
+          name=$("#name").val();
+          preparation=$("#description").val();
+          $.post("http://localhost:3000/rezepte",{name: name,preparation: preparation}, function(data){
+            if(data==='done')
+              {
+                alert("login success");
+              }
+          });
+        });
+      });
+    </script>
+	</head>
+	<body>
+		<h1>Add Rezept</h1>
+		<hr>
+		<label for="name">Rezept Name: </label>	
+            <input type="text" id="name" name="name"></br>
+            <label for="description">Zubereitung:</br></label>
+    <textarea id="description"  name="description"></textarea> 
+			<p>Level:</br>
+    <label for="1">1</label><input type="radio" name="level" id="1" value="1"><br>
+    <label for="2">2</label><input type="radio" name="level" id="2" value="2"><br> 
+    <label for="3">3</label><input type="radio" name="level" id="3" value="3"><br> 
+			<br></br>
+			<input type="submit" value="Create">		
+	</body>
+</html>-->

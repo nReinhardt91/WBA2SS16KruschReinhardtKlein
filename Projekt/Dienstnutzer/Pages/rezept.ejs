@@ -1,0 +1,26 @@
+<!-- Pages/rezept.ejs -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+   
+</head>
+
+<body>
+
+    <h1> Rezepte:</h1>
+    <ul>
+        <li> NAME: <%= rezept.name%> </li>
+
+<li>ZUBEREITUNG: <%= rezept.preparation%> </li>
+<li>LEVEL: <%= rezept.level%> </li>
+</ul>
+    <form method="POST" action="http://localhost:3001/rezepte/<%= rezept.id%>" >
+        <input type="submit" value="delete"/>
+    </form>
+    <a href="http://localhost:3001/rezepte"> Zurueck</a>
+    
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-<!-- views/pages/register.ejs -->
+<!-- Pages/rezepte.ejs -->
 
 <!DOCTYPE html>
 <html>
@@ -9,12 +9,15 @@
 
 <body>
 
-    <h1>Rezepte</h1>
-    <ul>
+    <h1>Alle Rezepte:</h1>
+    <ul> 
+<% for(var i=0; i<rezeptedata.length; i++) {%>
+       <li> <a href="<%= rezeptedata[i].uri %>"> <%= rezeptedata[i].name%> </a>
+</li>
+<% } %>
+</ul>
 
-        
-      <li> <%= rezeptedata%> </li> 
-    </ul>
+<a href="http://localhost:3001/"> Zurueck</a>
 </body>
 
 </html>
