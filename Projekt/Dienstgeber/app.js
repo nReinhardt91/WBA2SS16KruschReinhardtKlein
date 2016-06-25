@@ -11,19 +11,19 @@ app.use(bodyParser.json());
 var uri;
 
 //testen
-app.post('/addRezept', function(req, res){
-
-    var newRezept = req.body;
-
-    db.incr('id:rezepte', function(err, rep){
-
-        newRezept.id = rep;
-        db.set('rezepte:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
-            console.log(newRezept.name);
-            res.status(201).json(newRezept);
-        });
-    });
-});
+//app.post('/addRezept', function(req, res){
+//
+//    var newRezept = req.body;
+//
+//    db.incr('id:rezepte', function(err, rep){
+//
+//        newRezept.id = rep;
+//        db.set('rezepte:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
+//            console.log(newRezept.name);
+//            res.status(201).json(newRezept);
+//        });
+//    });
+//});
 
 
 
@@ -38,7 +38,7 @@ app.post('/rezepte', function(req, res){
         newRezept.id = rep;
         uri="http://localhost:3000/rezepte/"+newRezept.id;
         db.set('rezepte:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
-            res.send(uri);
+            res.status(200).send(uri);
         });
     });
 });
@@ -63,7 +63,8 @@ app.get('/rezepte/:id', function(req, res){
 app.get('/rezepte', function(req, res){
 
     db.keys('rezepte:*', function(err, rep){
-        var rezepte = [];
+       if(rep){
+           var rezepte = [];
 
         if (rep.length == 0) {
             res.json(rezepte);
@@ -76,15 +77,21 @@ app.get('/rezepte', function(req, res){
             rep.forEach(function(val){
                 _json = JSON.parse(val);
                 rezepte.push(JSON.parse(val));
-        uris.push({"uri": "http://localhost:3001/rezepte/"+_json.id, "name": _json.name});
+                uris.push({"uri": "http://localhost:3001/rezepte/"+_json.id, "name": _json.name});
             });
 
             rezepte = rezepte.map(function(rezept){
                 return {id: rezept.id, name: rezept.name, uris};
 
                   });
-            res.json(uris);
-        });
+            res.status(200).json(uris);
+        }); 
+           
+       }else{
+                res.status(404).type('text').send('Liste konnte nicht erstellt werden.');
+                }
+        
+    
     });
 
 });
@@ -117,7 +124,7 @@ app.put('/rezepte/:id', function(req, res){
             var updateRezept = req.body;
             updateRezept.id = req.params.id;
             db.set('rezepte:' + req.params.id, JSON.stringify(updateRezept), function(err, rep){
-                res.json(updateRezept);
+                res.status(200).json(updateRezept);
             });
         }
         else {
@@ -133,7 +140,7 @@ app.post('/rezepte/:id/zutatenliste', function(req, res){
     var neueID="zutatenliste:"+listid;
     var uri="http://localhost:3000/rezepte/"+listid+"/zutatenliste";
     db.rpush(neueID, JSON.stringify(newList), function(err, rep){
-            res.json(uri);
+            res.status(201).json(uri);
     });
 });
 
@@ -158,7 +165,7 @@ app.delete('/rezepte/:id/zutatenliste', function(req, res){
     db.lrange('zutatenliste:'+listid, 0, -1, function(req, reply){
         if(reply){
             db.del('zutatenliste:'+listid, function(err, rep){
-                res.type('text').send('Zutatenliste mit der ID '+listid+' wurde gelöscht');
+                res.status(200).type('text').send('Zutatenliste mit der ID '+listid+' wurde gelöscht');
             });
         }
         else {
@@ -176,7 +183,7 @@ app.get('/wgs/:id', function(req, res){
 
     db.get('wgs:'+req.params.id, function(err, rep){
         if(rep){
-            res.type('json').send(rep);
+            res.status(200).type('json').send(rep);
         }
         else{
             res.status(404).type('text').send('Die WG mit der ID ' +req.params.id+' wurde nicht gefunden');
@@ -195,7 +202,7 @@ app.post('/wgs', function(req, res){
         newWG.id = rep;
         uri="http://localhost:3000/wgs/"+newWG.id;
         db.set('wgs:'+newWG.id, JSON.stringify(newWG), function(err, rep){
-            res.send(uri);
+            res.status(201).send(uri);
         });
     });
 
@@ -208,7 +215,7 @@ app.delete('/wgs/:id', function(req, res){
     db.get('wgs:'+req.params.id, function(err, rep){
         if(rep){
             db.del('wgs:'+req.params.id, function(err, rep){
-                res.type('text').send('WG mit der ID '+req.params.id+' wurde gelöscht');
+                res.status('200').type('text').send('WG mit der ID '+req.params.id+' wurde gelöscht');
             });
         }
         else {
@@ -232,7 +239,7 @@ app.post('/wgs/:id/einkaufsliste', function(req, res){
         });
         console.log(JSON.stringify(newList));
         db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
-            res.json(uri);
+            res.status(201).json(uri);
         });
     });
 });
@@ -257,11 +264,11 @@ app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
             var updateListe = req.body;
             updateListe.id = req.params.listid;
             db.set('einkaufsliste:' + req.params.id, JSON.stringify(updateListe), function(err, rep){
-                res.json(updateListe);
+                res.status(200).json(updateListe);
             });
         }
         else {
-            res.status(404).type('text').send('Die Liste wurde nicht gefunden');
+            res.status(404).type('text').send('Die Liste wurde nicht gefunden und konnte nicht geupdatet werden.');
         }
     });
 });
@@ -319,7 +326,7 @@ app.delete('/wgs/:id/einkaufsliste/:listid', function(req, res){
     db.lrange('einkaufsliste:'+listid, 0, -1, function(req, reply){
         if(reply){
             db.del('einkaufsliste:'+listid, function(err, rep){
-                res.type('text').send('Einkaufsliste mit der ID '+listid+' wurde gelöscht');
+                res.status(200).type('text').send('Einkaufsliste mit der ID '+listid+' wurde gelöscht');
             });
         }
         else {
@@ -342,7 +349,12 @@ app.post('/zutaten', function(req, res){
         newZutat.id = rep;
         uri="http://localhost:3000/zutaten/"+newZutat.id;
         db.set('zutaten:'+newZutat.id, JSON.stringify(newZutat), function(err, rep){
-            res.send(uri);
+            if(rep){
+                res.status(201).send(uri);
+            } else {
+                res.status(404).type('text').send('Konnte Zutaten nicht hinzufügen');
+            }
+                
         });
     });
 
@@ -354,7 +366,7 @@ app.get('/zutaten/:id', function(req, res){
 
     db.get('zutaten:'+req.params.id, function(err, rep){
         if(rep){
-            res.type('json').send(rep);
+            res.status(200).type('json').send(rep);
         }
         else{
             res.status(404).type('text').send('Die Zutat mit der ID ' +req.params.id+' wurde nicht gefunden');
@@ -406,7 +418,7 @@ app.get('/zutaten', function(req, res){
                 return {id: zutaten.id, name: zutaten.name};
 
             });
-            res.json(uris);
+            res.status(200).json(uris);
         });
     });
 
@@ -420,7 +432,7 @@ app.delete('/zutaten/:id', function(req, res){
     db.get('zutaten:'+req.params.id, function(err, rep){
         if(rep){
             db.del('zutaten:'+req.params.id, function(err, rep){
-                res.type('text').send('Zutat mit der ID '+req.params.id+' wurde gelöscht');
+                res.status(200).type('text').send('Zutat mit der ID '+req.params.id+' wurde gelöscht');
             });
         }
         else {
@@ -438,7 +450,7 @@ app.put('/zutaten/:id', function(req, res){
             var updateZutat = req.body;
             updateZutat.id = req.params.id;
             db.set('zutaten:' + req.params.id, JSON.stringify(updateZutat), function(err, rep){
-                res.json(updateZutat);
+                res.status(200).json(updateZutat);
             });
         }
         else {
