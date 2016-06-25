@@ -8,7 +8,7 @@ var ejs=require('ejs');
 var fs=require('fs');
 
 
-
+//Main Seite 
 app.get('/', function(req, res){
  fs.readFile('./Pages/main.html', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
