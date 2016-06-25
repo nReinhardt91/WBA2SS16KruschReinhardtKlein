@@ -4,22 +4,46 @@
 <html>
 
 <head>
-   
+  
 </head>
 
 <body>
 
-    <h1> Rezepte:</h1>
-    <ul>
-        <li> NAME: <%= rezept.name%> </li>
-
-<li>ZUBEREITUNG: <%= rezept.preparation%> </li>
-<li>LEVEL: <%= rezept.level%> </li>
+    <h1> Rezept: <%= rezept.name%></h1>
+    <hr>
+   
+         
+               Zutaten: 
+               
+                    <ul>
+                        <% for(var i=0; i<zutatenliste.length; i++) {%>
+                        <li> <%= zutatenliste[i] %></li>
+                            <% } %>
+                    </ul>
+          
+            
+     <table>
+            <tr> 
+                <td> Zubereitung: </td> 
+                <td> <%= rezept.preparation%> </td></li>
+           </tr>
+            <tr>
+                    <td> Schwierigkeitsgrad:</td>
+                    <td><%= rezept.level%> </td>
+        </tr>
+    </table>
 </ul>
     <form method="POST" action="http://localhost:3001/rezepte/<%= rezept.id%>" >
-        <input type="submit" value="delete"/>
+        <input type="submit" value="delete" style="width: 200px; height:30ps"/>
     </form>
-    <a href="http://localhost:3001/rezepte"> Zurueck</a>
+   
+    <form method="GET" action="http://localhost:3001/rezepte" >
+        <input type="submit" value="zurueck zu allen Rezepten" style="width: 200px; height:30ps" />
+    </form>
+    
+     <form method="GET" action="http://localhost:3001" >
+        <input type="submit" value="zurueck zur Startseite" style="width: 200px; height:30ps"/>
+    </form>
     
 </body>
 

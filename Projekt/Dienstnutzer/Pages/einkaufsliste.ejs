@@ -1,0 +1,34 @@
+<!-- Pages/rezepte.ejs -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+   
+</head>
+
+<body>
+
+    <h1>Alle Einkaufslisten:</h1>
+  <hr>
+    <ul> 
+<% for(var i=0; i<einkaufslistedata.length; i++) {%>
+       <li> <a href="<%= einkaufslistedata[i].uri %>"> <%= einkaufslistedata[i].uri%> </a>
+</li>
+<% } %>
+</ul>
+         <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste/1" >
+        <input type="submit" value="Einkaufsliste 1" style="width: 200px; height:30ps"/>
+    </form>
+        <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste/2" >
+        <input type="submit" value="Einkaufsliste 2" style="width: 200px; height:30ps"/>
+    </form>
+    <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste/3" >
+        <input type="submit" value="Einkaufsliste 3" style="width: 200px; height:30ps"/>
+    </form>
+     <form method="GET" action="http://localhost:3001" >
+        <input type="submit" value="zurueck zur Startseite" style="width: 200px; height:30ps"/>
+    </form>
+</body>
+
+</html>

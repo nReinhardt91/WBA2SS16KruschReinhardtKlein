@@ -10,14 +10,16 @@
 <body>
 
     <h1>Alle Rezepte:</h1>
+  <hr>
     <ul> 
 <% for(var i=0; i<rezeptedata.length; i++) {%>
        <li> <a href="<%= rezeptedata[i].uri %>"> <%= rezeptedata[i].name%> </a>
 </li>
 <% } %>
 </ul>
-
-<a href="http://localhost:3001/"> Zurueck</a>
+     <form method="GET" action="http://localhost:3001" >
+        <input type="submit" value="zurueck zur Startseite" style="width: 200px; height:30ps"/>
+    </form>
 </body>
 
 </html>

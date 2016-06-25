@@ -4,19 +4,32 @@
 <html>
 
 <head>
-    <title> Hier unserer Text</title>
+    <title> WG-Einkaufsliste</title>
 </head>
 
 <body class="container">
 
-        <h1>Start: </h1>
-        <div class="container-fluid panel panel-default dashboard-container">
-            <div class="row">
-                <a href="http://localhost:3001/rezepte"><div class="col-sm-6">alle Rezept</div> </a>
-                <a href="http://localhost:3001/einkaufliste.ejs"><div class="col-sm-6">alle Einkaufslisten</div> </a>
-                <a href="http://localhost:3001/addRezept"><div class="col-sm-6">Rezept anlegen</div> </a>
-            </div>
+        <h1>Hallo, WGNummer 1 </h1>
+        <hr>
+        <p> Was moechtest du tun?</p>
+    Rezepte:
+        <form method="GET" action="http://localhost:3001/rezepte" >
+        <input type="submit" value="Rezepte durchstoebern" style="width: 200px; height:30ps" />
+    </form>
+    
 
+    <form method="GET" action="http://localhost:3001/addRezept" >
+        <input type="submit" value="neues Rezept anlegen" style="width: 200px; height:30ps"/>
+    </form>
+    <br>
+    Einkaufslisten:
+         <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste" >
+        <input type="submit" value="Einkaufslisten durchstoebern" style="width: 200px; height:30ps"/>
+    </form>
+    
+    <form method="GET" action="http://localhost:3001/wgs/1/addListe" >
+        <input type="submit" value="Einkaufsliste anlegen" style="width: 200px; height:30ps"/>
+    </form>
+    
 </body>
-
 </html>

@@ -227,12 +227,28 @@ app.post('/wgs/:id/einkaufsliste', function(req, res){
     
     db.incr('id:einkaufsliste', function(err, rep){
         newList.id = rep;
-        var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste"+newList.id;
+        var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste/"+newList.id;
+        db.rpush('einkaufsliste:'+newList.id, newList.id, function(err, rep){
+        });
+        console.log(JSON.stringify(newList));
         db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
             res.json(uri);
         });
     });
 });
+
+app.post('/wgs/:id/einkaufsliste/:listid', function(req, res){
+    var listid=parseInt(req.params.listid);
+    var wgID=parseInt(req.params.id);
+    var newList = JSON.stringify(req.body);
+    console.log(newList);
+    var neueID="einkaufsliste:"+listid;
+    var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste/"+listid;
+    db.rpush(neueID, newList, function(err, rep){
+            res.json(uri);
+    });
+});
+
 
 app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
     
@@ -250,21 +266,51 @@ app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
     });
 });
 
+//alle Einkaufslisten ausgeben lassen
+//TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber
+app.get('/wgs/:id/einkaufsliste', function(req, res){
+        var wgid=req.params.id;
+    db.keys('einkaufsliste:*', function(err, rep){
+        var einkaufslisten = [];
+        var uris=[];
+        if (rep.length == 0) {
+            res.json(einkaufslisten);
+            return;
+        }
+        var ziel=0;
+            rep.forEach(function(val){
+                db.lrange(val, 0, 0, function(req, res){ 
+                    ziel=parseInt(res);
+                     console.log(ziel);
+                });
+                console.log(ziel);
+                einkaufslisten.push(val);
+                uris.push({"uri": "http://localhost:3001/wgs/"+wgid+"/einkaufsliste/"+ziel});
+            });
+                
+                
+            einkaufslisten = einkaufslisten.map(function(einkaufsliste){
+                return {listid: einkaufslisten.listid, name: einkaufslisten.name, uris};
+                  });
+            res.json(uris);
+        });
+});
 /*GET: eine Einkaufsliste ausgeben*/
-/*TODO: Ausgabe korrigieren, Name der Liste nicht als Menge aber Zutaten als Menge??*/
 app.get('/wgs/:id/einkaufsliste/:listid', function(req, res){
     var listid=parseInt(req.params.listid);
+    console.log("hier"+listid);
         db.exists('einkaufsliste:'+listid, function(err, reply) {
             if (reply === 1) {
-                db.lrange('einkaufsliste:'+listid, 0, -1, function(req, res){
-                console.log(res);
-                
+                db.lrange('einkaufsliste:'+listid, 0, -1, function(requ, resp){
+                console.log(resp);
+                res.status(200).json(resp);
                 });
             } else {
+                
                 console.log('nicht vorhanden');
+                res.status(404).type('text').send("Einkaufsliste existiert nicht");
             }
-            res.type('text').send("Siehe Konsole");
-        });
+            });
 });
 
 /*DELETE: eine Einkaufsliste löschen*/

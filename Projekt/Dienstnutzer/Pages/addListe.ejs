@@ -1,0 +1,39 @@
+<html>
+	<head>
+        
+		<title>Eine Liste hinzufuegen</title>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">  </script>
+   <script>
+      $(neu).ready(function(){
+        var name,preparation;
+        $("#submit").click(function(){
+          name=$("#name").val();
+          preparation=$("#description").val();
+          $.post("http://localhost:3000/rezepte",{name: name,preparation: preparation}, function(data){
+            if(data==='done')
+              {
+                alert("login success");
+              }
+          });
+        });
+      });
+    </script>
+    </head>
+    <body>
+    <h1>Liste hinzufuegen</h1>
+		<hr>
+		<form id="neu" name="rezeptForm" action="http://localhost:3001/rezepte" method="post">
+            <p>Listen Name:</p>
+            <input type="text" id="name" name="name"></br>
+            <p>Zutaten:</p>
+            <textarea id="description"  name="description"></textarea> <br>
+			<!-- muss noch ganz viel gemacht werden/-->
+			<input id="submit" type="submit" value="Create">	
+        </form>
+             <form method="GET" action="http://localhost:3001" >
+        <input type="submit" value="zurueck zur Startseite" style="width: 200px; height:30ps"/>
+    </form>
+	</body>
+</html>
+
+
