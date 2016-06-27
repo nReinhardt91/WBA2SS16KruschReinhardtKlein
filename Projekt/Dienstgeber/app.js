@@ -284,15 +284,15 @@ app.get('/wgs/:id/einkaufsliste', function(req, res){
             res.json(einkaufslisten);
             return;
         }
-        var ziel=0;
+        var ziel="";
             rep.forEach(function(val){
-                db.lrange(val, 0, 0, function(req, res){ 
-                    ziel=parseInt(res);
-                     console.log(ziel);
+                db.lrange(val, 0, 0, function(request, resp){ 
+                    ziel=parseInt(resp);
+                    console.log(ziel); 
                 });
-                console.log(ziel);
-                einkaufslisten.push(val);
                 uris.push({"uri": "http://localhost:3001/wgs/"+wgid+"/einkaufsliste/"+ziel});
+                einkaufslisten.push(val);
+                
             });
                 
                 
