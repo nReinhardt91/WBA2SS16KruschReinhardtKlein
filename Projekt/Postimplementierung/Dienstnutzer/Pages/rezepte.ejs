@@ -1,0 +1,16 @@
+<!-- Pages/rezepte.ejs -->
+
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Alle Rezepte:</h1>
+    <ul>
+      <% for(var i=0; i<rezeptedata.length; i++) { %>
+      <li>
+        <a href="<%= rezeptedata[i].uri %>"> <%= rezeptedata[i].name%> </a>
+      </li>
+      <% } %>
+    </ul>
+    <a href="http://localhost:5555/"> Zurueck</a>
+  </body>
+</html>
