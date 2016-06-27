@@ -2,15 +2,40 @@
 <html>
     <head>
     <meta charset="UTF-8"/>
+        <style>
+                h1 { 
+            color: green; 
+        }
+        h1, p{
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+        html, body {
+            height: 100%; 
+        }
+        html {
+            display: table;
+            margin: auto;
+            margin-top: 20px;
+        }
+        body {
+            display: table-cell;
+        }
+        textarea, input { font-size: 14px; }
+            </style>
     </head>
   <body>
-    <form id="addZutatenliste" action="http://localhost:3001/rezepte/:id/zutatenliste" method="get" enctype="application/x-www-form-urlencoded">
-      <p>Zutat hinzufügen:</p>
-        <textarea id="zutat"  name="zutat"></textarea>
-		  <input id="submit" type="submit" value="Hinzufügen" style="width: 200px; height:30ps">
-        </form>
-        <form method="GET" action="http://localhost:3001/rezepte" >
-        <input type="submit" value="Fertig?" style="width: 200px; height:30ps" />
+    <form id="addZutatenliste" action="#" method="post" enctype="application/x-www-form-urlencoded">
+        <h1>Zutat hinzufügen:</h1>
+        <hr>
+        <textarea id="zutat"  name="zutat" rows="2" cols="30"></textarea>
+        <br>
+        <br>
+		  <input id="submit" type="submit" value="Hinzufügen" style="width: 320px; height:40ps">
+      </form>
+    <form method="GET" action="http://localhost:3001/rezepte" >
+        <input type="submit" value="zurück zu allen Rezepten" style="width: 320px; height:40ps" /></form>
+     <form method="GET" action="http://localhost:3001" >
+        <input type="submit" value="zurück zur Startseite" style="width: 320px; height:40ps"/>
     </form>
   </body>
 </html>

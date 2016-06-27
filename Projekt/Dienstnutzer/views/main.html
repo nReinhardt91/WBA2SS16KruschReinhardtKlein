@@ -2,35 +2,58 @@
 
 <!DOCTYPE html>
 <html>
+    
 
 <head>
     <meta charset="UTF-8"/>
     <title> WG-Einkaufsliste</title>
+    <style>
+
+        h1 { 
+            color: green; 
+        }
+        h1, p{
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+        html, body {
+            height: 100%; 
+        }
+        html {
+            display: table;
+            margin: auto;
+            margin-top: 20px;
+        }
+        body {
+            display: table-cell;
+        }
+        textarea, input { font-size: 14px; }
+    </style>
 </head>
 
 <body class="container">
 
-        <h1>Hallo, WGNummer 1 </h1>
+        <h1>Hallo, WG 1 </h1>
         <hr>
-        <p> Was moechtest du tun?</p>
-    Rezepte:
+        <p> Was möchtest du tun?</p>
+    <p><u> Rezepte:</u>  </p>
         <form method="GET" action="http://localhost:3001/rezepte" >
-        <input type="submit" value="Rezepte durchstöbern" style="width: 200px; height:30ps" />
+        <input type="submit" value="Rezepte durchstöbern" style="width: 200px; height:40ps" />
     </form>
-    
-
     <form method="GET" action="http://localhost:3001/addRezept" >
-        <input type="submit" value="neues Rezept anlegen" style="width: 200px; height:30ps"/>
+        <input type="submit" value="neues Rezept anlegen" style="width: 200px; height:40ps"/>
     </form>
     <br>
-    Einkaufslisten:
-         <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste" >
-        <input type="submit" value="Einkaufslisten durchstöbern" style="width: 200px; height:30ps"/>
-    </form>
     
+    <p><u> Einkaufslisten:</u>  </p>
+         <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste" >
+        <input type="submit" value="Einkaufslisten durchstöbern" style="width: 200px; height:40ps"/>
+    </form>
+
     <form method="GET" action="http://localhost:3001/wgs/1/addListe" >
-        <input type="submit" value="Einkaufsliste anlegen" style="width: 200px; height:30ps"/>
+        <input type="submit" value="Einkaufsliste anlegen" style="width: 200px; height:40ps"/>
     </form>
     
 </body>
+    
+    
 </html>

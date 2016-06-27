@@ -118,6 +118,7 @@ app.put('/rezepte/:id', function(req, res){
 /*----------------------------------------*/
 /*------------Zutatenliste----------------*/
 app.post('/rezepte/:id/zutatenliste', function(req, res){
+    console.log("wurde aufgerufen");
     var listid=parseInt(req.params.id);
     var newList = req.body;
     var neueID="zutatenliste:"+listid;

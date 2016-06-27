@@ -2,21 +2,46 @@
 <html>
     <head>
     <meta charset="UTF-8"/>
+                <style>
+                h1 { 
+            color: green; 
+        }
+        h1, p{
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+        html, body {
+            height: 100%; 
+        }
+        html {
+            display: table;
+            margin: auto;
+            margin-top: 20px;
+        }
+        body {
+            display: table-cell;
+        }
+        textarea, input { font-size: 14px; }
+            </style>
     </head>
   <body>
+      <h1>Rezept hinzufügen</h1>
+      <hr>
     <form id="addRezept" action="http://localhost:3001/rezepte/" method="post" enctype="application/x-www-form-urlencoded">
-      <p>Rezept Name:</p>
+      <p><u>Rezeptname:</u></p>
         <input type="text" id="name" name="name"></br>
-      <p>Zubereitung:</p>
-        <textarea id="zubereitung"  name="zubereitung"></textarea>
-      <p>Level:</br>
+      <p><u>Zubereitung:</u></p>
+        <textarea id="zubereitung"  name="zubereitung" rows="2" cols="30"></textarea>
+      <p><u>Level:</u></br>
         <label for="1">1</label><input type="radio" name="level" id="l1" value="1"><br>
         <label for="2">2</label><input type="radio" name="level" id="l2" value="2"><br>
         <label for="3">3</label><input type="radio" name="level" id="l3" value="3"><br>
-        
-		  <input id="submit" type="submit" value="Rezept erstellen">
+        <br>
+		  <input id="submit" type="submit" value="Rezept erstellen" style="width: 320px; height:30ps">
         </form>    
     <button> <a href="http://localhost:3001/rezepte/<%= rezeptedata%>/zutatenliste"> Zutat hinzufügen </a></button>
+     <form method="GET" action="http://localhost:3001" >
+        <input type="submit" value="Startseite" style="width: 320px; height:30ps"/>
+    </form>
 
   </body>
 </html>

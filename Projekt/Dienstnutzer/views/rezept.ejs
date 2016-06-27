@@ -5,34 +5,51 @@
 
 <head>
   <meta charset="UTF-8"/>
+            <style>
+                h1 { 
+            color: green; 
+        }
+        h1, p, ul, tr, td{
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+        html, body {
+            height: 100%; 
+        }
+        html {
+            display: table;
+            margin: auto;
+            margin-top:20px;
+        }
+        body {
+            display: table-cell;
+        }
+        textarea, input { font-size: 14px; }
+            </style>
 </head>
 
 <body>
 
     <h1> Rezept: <%= rezept.name%></h1>
-    <hr>
-   
-         
-               Zutaten: 
-               
-                    <ul>
-                        <% for(var i=0; i<zutatenliste.length; i++) {%>
-                        <li> <%= zutatenliste[i] %></li>
-                            <% } %>
-                    </ul>
-          
-            
-     <table>
-            <tr> 
-                <td> Zubereitung: </td> 
-                <td> <%= rezept.preparation%> </td></li>
-           </tr>
-            <tr>
-                    <td> Schwierigkeitsgrad:</td>
-                    <td><%= rezept.level%> </td>
+    <hr> 
+    <table>
+    <tr><td> Zutaten:</td>
+        <td> 
+    <ul>
+        <% for(var i=0; i<zutatenliste.length; i++) {%>
+        <li> <%= zutatenliste[i] %></li>
+        <% } %>
+    </ul> 
+        </td>
         </tr>
+        <tr> 
+            <td width="20px">Zubereitung:</td> 
+            <td> <%= rezept.preparation%> </td>       
+        </tr>     
+        <tr> 
+            <td>Schwierigkeitsgrad: </td>
+            <td> <%= rezept.level%></td>
+        </tr>          
     </table>
-</ul>
     <form method="POST" action="http://localhost:3001/rezepte/<%= rezept.id%>" >
         <input type="submit" value="löschen" style="width: 200px; height:30ps"/>
     </form>

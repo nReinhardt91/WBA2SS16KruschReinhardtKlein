@@ -203,10 +203,10 @@ fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestri
               console.log(rezeptedata);                      
               var html=ejs.render(filestring, {rezeptedata: rezeptedata});
               fs.readFile('./views/addZutatenliste.ejs', function(err, page) {
-                        res.setHeader("content-type", "text/html");
-                        res.writeHead(200);
-                        res.write(html);
-                        res.end();
+                      res.setHeader("content-type", "text/html");
+                      res.writeHead(200);
+                      res.write(html);
+                      res.end();
               
           });
           }else {
@@ -217,32 +217,43 @@ fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestri
 });
 
 
-//
-//app.get('/rezepte/:id/zutatenliste', function(req, res) {
-//  console.log(req.params.id);
-//  var options={
-//                host: 'localhost',
-//                port:  3000,
-//                path: '/rezepte/'+req.params.id+'/zutatenliste',
-//                method: 'POST',
-//                contenttype: 'application/json'
-//              }
-//  
-//  var zutat={"zutat": req.body.zutat,};
-//    console.log(zutat);
-//    request.post(
-//      'http://localhost:3000/rezepte/'+req.params.id+'/zutatenliste', {
-//          json: zutat
-//      , }
-//      , function (error, response, body) {
-//          if (!error && response.statusCode == 200) {
-//              console.log(body);
-//              res.status(200).send('OK');
-//          } else {
-//              handleInternalError(req, res);
-//          };
-//      });
-//});
+
+app.post('/rezepte/:id/zutatenliste', function(req, res) {
+    fs.readFile('./views/addZutatenliste.ejs', {encoding: 'utf-8'}, function(err, filestring){
+  console.log(req.params.id);
+  var options={
+                host: 'localhost',
+                port:  3000,
+                path: '/rezepte/'+req.params.id+'/zutatenliste',
+                method: 'POST',
+                contenttype: 'application/json'
+              }
+  
+  var zutat=[ req.body.zutat];
+    console.log(req.body);
+    console.log(req.url);
+    request.post(
+      'http://localhost:3000'+req.url, {
+          json: zutat
+      , }
+      , function (error, response, body) {
+          console.log("huhu");
+          if (!error && response.statusCode == 201) {
+              console.log(body);
+              var html=ejs.render(filestring, {zutat: zutat});
+              fs.readFile('./views/addZutatenliste.ejs', function(err, page) {
+                      res.setHeader("content-type", "text/html");
+                      res.writeHead(200);
+                      res.write(html);
+                      res.end();
+              });
+          }
+          else {
+              handleInternalError(req, res);
+          };
+      });
+});
+});
 
 //____________________________________________________//
 //_______________Einkaufslisten_______________________//
