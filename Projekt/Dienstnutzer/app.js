@@ -7,6 +7,8 @@ var http=require('http');
 var ejs=require('ejs');
 var fs=require('fs');
 
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 //Main Seite 
 app.get('/', function(req, res){
@@ -165,41 +167,83 @@ app.get('/addRezept', function(req, res){
         res.end();
     }); 
 });
-/*
-app.post('/rezepte', function(req, res){
-    fs.readFile("./views/addRezept.ejs", {encoding:"utf-8"}, function(err, filestring){
-        var newRezept=req.body;
-    if (err){
-        throw err;
-    } else{
-        var options = {
-			host: 'localhost',
-			port: 3000,
-			path: '/addRezept',
-			method: 'POST',
-			headers: {'Content-Type' : 'application/json'},
-            form: { 'name': 'xxxx', 'description':'yyyy'}
-		}
-        var externalRequest = http.request(options, function(externalResponse){   
-            console.log("post rezept");
-            externalResponse.on("data", function(chunk){
-                newRezept=JSON.parse(chunk);
-                console.log(newRezept);
-                var html=ejs.render(filestring, {rezept: newRezept, filename: "./views/addRezept.ejs"});
-                res.setHeader("content-type", "text/html");
-                res.writeHead(200);
-                res.write(html);
-                res.end();
-            });
-        });
-        externalRequest.setHeader("content-type", "application.json");
-        //externalRequest.write(JSON.stringify(req.body));
-        externalRequest.end();
-        }
-    });
+
+app.get('/rezepte/:id/zutatenliste', function(req, res){	
+	fs.readFile('./views/addZutatenliste.ejs', function(err, page) {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.write(page);
+        res.end();
+    }); 
 });
-      
-*/
+//---------------------------------------------//
+//---------------------------------------------//
+// sofunktioniert es nur teilweise//
+app.post('/rezepte', function(req, res) {
+fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestring){
+  var options={
+                host: 'localhost',
+                port:  3000,
+                path: '/rezepte',
+                method: 'POST',
+                contenttype: 'application/json'
+              }
+
+  var rezept={
+    "name": req.body.name,
+    "preparation": req.body.zubereitung,
+    "level":req.body.level,
+  };
+  request.post(
+      'http://localhost:3000/rezepte', {
+          json: rezept
+, }
+      , function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+              var rezeptedata=body;
+              console.log(rezeptedata);                      
+              var html=ejs.render(filestring, {rezeptedata: rezeptedata});
+              fs.readFile('./views/addZutatenliste.ejs', function(err, page) {
+                        res.setHeader("content-type", "text/html");
+                        res.writeHead(200);
+                        res.write(html);
+                        res.end();
+              
+          });
+          }else {
+              handleInternalError(req, res);
+          };
+      });
+});
+});
+
+
+//
+//app.get('/rezepte/:id/zutatenliste', function(req, res) {
+//  console.log(req.params.id);
+//  var options={
+//                host: 'localhost',
+//                port:  3000,
+//                path: '/rezepte/'+req.params.id+'/zutatenliste',
+//                method: 'POST',
+//                contenttype: 'application/json'
+//              }
+//  
+//  var zutat={"zutat": req.body.zutat,};
+//    console.log(zutat);
+//    request.post(
+//      'http://localhost:3000/rezepte/'+req.params.id+'/zutatenliste', {
+//          json: zutat
+//      , }
+//      , function (error, response, body) {
+//          if (!error && response.statusCode == 200) {
+//              console.log(body);
+//              res.status(200).send('OK');
+//          } else {
+//              handleInternalError(req, res);
+//          };
+//      });
+//});
+
 //____________________________________________________//
 //_______________Einkaufslisten_______________________//
 //TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber
@@ -306,7 +350,7 @@ app.post("/wgs/:id/einkaufsliste/:listid", function(req,res){
             externalRequest.end();
 });
 
-app.get('/wgs/:id/addListe', function(req, res){	
+app.get('/wgs/:id/addListe', function(req, res){
 	fs.readFile('./views/addListe.ejs', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);

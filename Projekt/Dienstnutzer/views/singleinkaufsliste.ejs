@@ -4,7 +4,7 @@
 <html>
 
 <head>
-   
+   <meta charset="UTF-8"/>
 </head>
 
 <body>
@@ -19,15 +19,15 @@
                     </ul>
 <!-- hier die ID übergeben um zu löschen --> 
 <form method="POST" action="http://localhost:3001/wgs/1/einkaufsliste/<%= einkaufsliste[0]%>" >
-        <input type="submit" value="delete" style="width: 200px; height:30ps"/>
+        <input type="submit" value="löschen" style="width: 200px; height:30ps"/>
     </form>
    
     <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste" >
-        <input type="submit" value="zurueck zu allen Listen" style="width: 200px; height:30ps" />
+        <input type="submit" value="zurück zu allen Listen" style="width: 200px; height:30ps" />
     </form>
     
      <form method="GET" action="http://localhost:3001" >
-        <input type="submit" value="zurueck zur Startseite" style="width: 200px; height:30ps"/>
+        <input type="submit" value="zurück zur Startseite" style="width: 200px; height:30ps"/>
     </form>
 </body>
 

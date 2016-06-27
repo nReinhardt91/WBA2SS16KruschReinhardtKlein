@@ -7,25 +7,9 @@ var db=redis.createClient();
 
 var app=express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 var uri;
-
-//testen
-//app.post('/addRezept', function(req, res){
-//
-//    var newRezept = req.body;
-//
-//    db.incr('id:rezepte', function(err, rep){
-//
-//        newRezept.id = rep;
-//        db.set('rezepte:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
-//            console.log(newRezept.name);
-//            res.status(201).json(newRezept);
-//        });
-//    });
-//});
-
-
 
 
 //Rezept hinzufügen
@@ -34,11 +18,10 @@ app.post('/rezepte', function(req, res){
     var newRezept = req.body;
 
     db.incr('id:rezepte', function(err, rep){
-
         newRezept.id = rep;
-        uri="http://localhost:3000/rezepte/"+newRezept.id;
+        //uri="http://localhost:3000/rezepte/"+newRezept.id;
         db.set('rezepte:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
-            res.status(200).send(uri);
+            res.status(200).send(""+newRezept.id);
         });
     });
 });
