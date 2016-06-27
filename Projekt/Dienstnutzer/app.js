@@ -10,7 +10,7 @@ var fs=require('fs');
 
 //Main Seite 
 app.get('/', function(req, res){
- fs.readFile('./Pages/main.html', function(err, page) {
+ fs.readFile('./views/main.html', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
         res.end();
@@ -18,7 +18,7 @@ app.get('/', function(req, res){
 });
 //Get auf alle Rezepte
 app.get('/rezepte', jsonParser, function(req,res){
-    fs.readFile('./Pages/rezepte.ejs', {encoding: 'utf-8'}, function(err, filestring){
+    fs.readFile('./views/rezepte.ejs', {encoding: 'utf-8'}, function(err, filestring){
         if (err){
             throw err;
 
@@ -56,7 +56,7 @@ app.get('/rezepte', jsonParser, function(req,res){
 
 //_________________________________________
 app.get("/rezepte/:id", function(req,res){
-    fs.readFile("./Pages/rezept.ejs", {encoding:"utf-8"}, function(err, filestring){
+    fs.readFile("./views/rezept.ejs", {encoding:"utf-8"}, function(err, filestring){
         if(err) {
             throw err;
             console.log("Etwas ist schief gegangen");
@@ -143,7 +143,7 @@ app.post("/rezepte/:id", function(req,res){
               
                     externalResponse.on("data", function(chunk){
                         console.log("body: "+chunk)
-                        fs.readFile('./Pages/delRezept.ejs', function(err, page) {
+                        fs.readFile('./views/delRezept.ejs', function(err, page) {
                         res.writeHead(200, {'Content-Type': 'text/html'});
                         res.write(page);
                         res.end();
@@ -159,7 +159,7 @@ app.post("/rezepte/:id", function(req,res){
 //________________________________________________
 
 app.get('/addRezept', function(req, res){	
-	fs.readFile('./Pages/addRezept.ejs', function(err, page) {
+	fs.readFile('./views/addRezept.ejs', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
         res.end();
@@ -167,7 +167,7 @@ app.get('/addRezept', function(req, res){
 });
 /*
 app.post('/rezepte', function(req, res){
-    fs.readFile("./Pages/addRezept.ejs", {encoding:"utf-8"}, function(err, filestring){
+    fs.readFile("./views/addRezept.ejs", {encoding:"utf-8"}, function(err, filestring){
         var newRezept=req.body;
     if (err){
         throw err;
@@ -185,7 +185,7 @@ app.post('/rezepte', function(req, res){
             externalResponse.on("data", function(chunk){
                 newRezept=JSON.parse(chunk);
                 console.log(newRezept);
-                var html=ejs.render(filestring, {rezept: newRezept, filename: "./Pages/addRezept.ejs"});
+                var html=ejs.render(filestring, {rezept: newRezept, filename: "./views/addRezept.ejs"});
                 res.setHeader("content-type", "text/html");
                 res.writeHead(200);
                 res.write(html);
@@ -204,7 +204,7 @@ app.post('/rezepte', function(req, res){
 //_______________Einkaufslisten_______________________//
 //TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber
 app.get('/wgs/1/einkaufsliste', jsonParser, function(req,res){
-    fs.readFile('./Pages/einkaufsliste.ejs', {encoding: 'utf-8'}, function(err, filestring){
+    fs.readFile('./views/einkaufsliste.ejs', {encoding: 'utf-8'}, function(err, filestring){
         if (err){
             throw err;
 
@@ -237,7 +237,7 @@ app.get('/wgs/1/einkaufsliste', jsonParser, function(req,res){
 });
 
 app.get("/wgs/1/einkaufsliste/:listid", function(req,res){
-    fs.readFile("./Pages/singleinkaufsliste.ejs", {encoding:"utf-8"}, function(err, filestring){
+    fs.readFile("./views/singleinkaufsliste.ejs", {encoding:"utf-8"}, function(err, filestring){
         if(err) {
             throw err;
             console.log("Etwas ist schief gegangen");
@@ -296,7 +296,7 @@ app.post("/wgs/:id/einkaufsliste/:listid", function(req,res){
               
                     externalResponse.on("data", function(chunk){
                         console.log("body: "+chunk)
-                        fs.readFile('./Pages/delListe.ejs', function(err, page) {
+                        fs.readFile('./views/delListe.ejs', function(err, page) {
                         res.writeHead(200, {'Content-Type': 'text/html'});
                         res.write(page);
                         res.end();
@@ -307,7 +307,7 @@ app.post("/wgs/:id/einkaufsliste/:listid", function(req,res){
 });
 
 app.get('/wgs/:id/addListe', function(req, res){	
-	fs.readFile('./Pages/addListe.ejs', function(err, page) {
+	fs.readFile('./views/addListe.ejs', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
         res.end();
