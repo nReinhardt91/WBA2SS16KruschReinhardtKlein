@@ -94,7 +94,6 @@ app.get("/rezepte/:id", function(req,res){
                 console.log(zutatenliste);
                 if(externalResponse.statusCode === 404){
                     console.log("404 - Rezept not found");
-                  //  res.render('main.html');
                 }    
                     externalResponse.on("data", function(chunk){
                         var rezept = JSON.parse(chunk);
@@ -139,8 +138,6 @@ app.post("/rezepte/:id", function(req,res){
             var externalRequestZutat=http.request(optionszutat, function(externalResponse){
                 externalResponse.on('data', function(chunk){
                     console.log("zutatenliste wurde geloescht");
-           
-            var erfolg="";
             var externalRequest = http.request(options, function(externalResponse){
               
                     externalResponse.on("data", function(chunk){
@@ -201,14 +198,12 @@ fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestri
           if (!error && response.statusCode == 200) {
               var rezeptedata=body;
               console.log(rezeptedata);                      
-              var html=ejs.render(filestring, {rezeptedata: rezeptedata});
-              fs.readFile('./views/addZutatenliste.ejs', function(err, page) {
+              
+             var html=ejs.render(filestring, {rezeptedata: rezeptedata});
                       res.setHeader("content-type", "text/html");
-                      res.writeHead(200);
+                    res.writeHead(200);
                       res.write(html);
                       res.end();
-              
-          });
           }else {
               handleInternalError(req, res);
           };
@@ -237,16 +232,13 @@ app.post('/rezepte/:id/zutatenliste', function(req, res) {
           json: zutat
       , }
       , function (error, response, body) {
-          console.log("huhu");
           if (!error && response.statusCode == 201) {
               console.log(body);
               var html=ejs.render(filestring, {zutat: zutat});
-              fs.readFile('./views/addZutatenliste.ejs', function(err, page) {
                       res.setHeader("content-type", "text/html");
                       res.writeHead(200);
                       res.write(html);
                       res.end();
-              });
           }
           else {
               handleInternalError(req, res);
@@ -319,7 +311,6 @@ app.get("/wgs/1/einkaufsliste/:listid", function(req,res){
                     externalResponse.on("data", function(chunk){
                         einkaufsliste = JSON.parse(chunk);
                         console.log(einkaufsliste);
-                        //console.log(einkaufsliste);
                         var html = ejs.render(filestring, {einkaufsliste: einkaufsliste});
                         res.setHeader("content-type", "text/html");
                         res.writeHead(200);
