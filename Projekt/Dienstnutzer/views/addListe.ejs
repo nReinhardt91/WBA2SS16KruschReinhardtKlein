@@ -1,7 +1,8 @@
+
 <html>
-	<head>
-           <meta charset="UTF-8"/>
-                <style>
+    <head>
+    <meta charset="UTF-8"/>
+        <style>
                 h1 { 
             color: green; 
         }
@@ -22,21 +23,25 @@
         textarea, input { font-size: 14px; }
             </style>
     </head>
-    <body>
-    <h1>Liste hinzufügen</h1>
-		<hr>
-		<form id="neu" name="rezeptForm" action="http://localhost:3001/rezepte" method="post">
-            <p><u>Listen Name:</u></p>
-            <input type="text" id="name" name="name"></br>
-            <p><u>Zutaten:</u></p>
-            <textarea id="description"  name="description"></textarea> <br>
-			<!-- muss noch ganz viel gemacht werden/-->
-			<input id="submit" type="submit" value="Create">	
-        </form>
-             <form method="GET" action="http://localhost:3001" >
-        <input type="submit" value="zurück zur Startseite" style="width: 200px; height:30ps"/>
+  <body>
+    <form id="addListe" action="http://localhost:3001/wgs/1/einkaufsliste" method="post" enctype="application/x-www-form-urlencoded">
+        <h1>Einkaufsliste hinzufügen:</h1>
+        <hr>
+        <p> Name der Liste: </p>
+        <textarea id="name"  name="name" rows="2" cols="30"></textarea>
+        <p>Zutat:</p>
+        <textarea id="zutat"  name="zutat" rows="2" cols="30"></textarea>
+        
+        <br>
+        <br>
+		  <input id="submit" type="submit" value="Hinzufügen" style="width: 320px; height:40ps">
+      </form>
+     <!-- <form id="addListeZutat" action="http://localhost:3001/wgs/1/einkaufsliste/<%= zutatdata%>" method="post" enctype="application/x-www-form-urlencoded">
+          <input id="submit" type="submit" value="weitere Zutaten hinzufügen" style="width: 320px; height:40ps"> 
+      </form>
+-->
+     <form method="GET" action="http://localhost:3001" >
+        <input type="submit" value="zurück zur Startseite" style="width: 320px; height:40ps"/>
     </form>
-	</body>
+  </body>
 </html>
-
-

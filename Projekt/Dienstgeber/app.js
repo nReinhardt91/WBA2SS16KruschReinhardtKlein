@@ -218,12 +218,10 @@ app.post('/wgs/:id/einkaufsliste', function(req, res){
     
     db.incr('id:einkaufsliste', function(err, rep){
         newList.id = rep;
-        var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste/"+newList.id;
-        db.rpush('einkaufsliste:'+newList.id, newList.id, function(err, rep){
-        });
-        console.log(JSON.stringify(newList));
+     //   var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste/"+newList.id;
+        
         db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
-            res.status(201).json(uri);
+            res.status(201).json(newList.id);
         });
     });
 });
@@ -259,32 +257,67 @@ app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
 
 //alle Einkaufslisten ausgeben lassen
 //TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber
+//app.get('/wgs/:id/einkaufsliste', function(req, res){
+//        var wgid=req.params.id;
+//    db.keys('einkaufsliste:*', function(err, rep){
+//        var einkaufslisten = [];
+//        var uris=[];
+//        if (rep.length == 0) {
+//            res.json(einkaufslisten);
+//            return;
+//        }
+//            rep.forEach(function(val){
+//               _json = JSON.parse(val);
+//          //      console.log(_json);
+//                einkaufslisten.push(JSON.parse(val));
+//                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/"+val.listid});
+//                einkaufslisten.push(val);
+//                console.log(uris);
+//            });
+//                
+//                
+//            einkaufslisten = einkaufslisten.map(function(einkaufsliste){
+//                return {listid: einkaufslisten.listid, name: einkaufslisten.name, uris};
+//                  });
+//            res.json(uris);
+//        });
+//});
+//TODO: Listenid zurckgeben
 app.get('/wgs/:id/einkaufsliste', function(req, res){
-        var wgid=req.params.id;
-    db.keys('einkaufsliste:*', function(err, rep){
-        var einkaufslisten = [];
-        var uris=[];
-        if (rep.length == 0) {
-            res.json(einkaufslisten);
+
+    db.keys('einkaufsliste:*', function(err, resp){
+       if(resp){
+           var liste = [];
+
+        if (resp.length == 0) {
+            res.json(liste);
             return;
         }
-        var ziel="";
+        var uris=[];
+
+        db.mget(resp, function(err, rep){
+
             rep.forEach(function(val){
-                db.lrange(val, 0, 0, function(request, resp){ 
-                    ziel=parseInt(resp);
-                    console.log(ziel); 
-                });
-                uris.push({"uri": "http://localhost:3001/wgs/"+wgid+"/einkaufsliste/"+ziel});
-                einkaufslisten.push(val);
-                
+               console.log(val);
+                _json = JSON.parse(val);
+                liste.push(JSON.parse(val));
+                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/??" });
             });
-                
-                
-            einkaufslisten = einkaufslisten.map(function(einkaufsliste){
-                return {listid: einkaufslisten.listid, name: einkaufslisten.name, uris};
+
+            liste = liste.map(function(rezept){
+                return {id: liste.id, name: liste.name, uris};
+
                   });
-            res.json(uris);
-        });
+            res.status(200).json(uris);
+        }); 
+           
+       }else{
+                res.status(404).type('text').send('Liste konnte nicht gefunden werden.');
+                }
+        
+    
+    });
+
 });
 /*GET: eine Einkaufsliste ausgeben*/
 app.get('/wgs/:id/einkaufsliste/:listid', function(req, res){

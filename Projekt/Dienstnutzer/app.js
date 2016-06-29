@@ -247,6 +247,74 @@ app.post('/rezepte/:id/zutatenliste', function(req, res) {
 });
 });
 
+
+app.post('/wgs/1/einkaufsliste', function(req, res) {
+    fs.readFile('./views/addListe.ejs', {encoding: 'utf-8'}, function(err, filestring){
+  var options={
+                host: 'localhost',
+                port:  3000,
+                path: '/wgs/1/einkaufsliste',
+                method: 'POST',
+                contenttype: 'application/json'
+              }
+  var name={"name": req.body.name};
+  var zutat=[req.body.zutat];
+        
+    console.log(req.body);
+    request.post(
+      'http://localhost:3000/wgs/1/einkaufsliste', {
+          json: zutat
+      , }
+      , function (error, response, body) {
+          if (!error && response.statusCode == 201) {
+            var zutatdata=body;
+              console.log(zutatdata);
+              var html=ejs.render(filestring, {zutatdata: zutatdata});
+                      res.setHeader("content-type", "text/html");
+                      res.writeHead(200);
+                      res.write(html);
+                      res.end();
+          }
+          else {
+              handleInternalError(req, res);
+          };
+      });
+});
+});
+
+app.put('/wgs/1/einkaufsliste/:listid', function(req, res) {
+    fs.readFile('./views/addListe.ejs', {encoding: 'utf-8'}, function(err, filestring){
+  console.log(req.params.listid);
+  var options={
+                host: 'localhost',
+                port:  3000,
+                path: '/wgs/1/einkaufsliste/'+listid,
+                method: 'PUT',
+                contenttype: 'application/json'
+              }
+  var zutat=[req.body.zutat];
+        
+    console.log(req.body);
+    console.log(req.url);
+    request.post(
+      'http://localhost:3000/wgs/1/einkaufsliste/'+listid, {
+          json: zutat
+      , }
+      , function (error, response, body) {
+          if (!error && response.statusCode == 201) {
+              var zutatlisteID=body;
+              var html=ejs.render(filestring, {zutatlisteID: zutatlisteID});
+                      res.setHeader("content-type", "text/html");
+                      res.writeHead(200);
+                      res.write(html);
+                      res.end();
+          }
+          else {
+              handleInternalError(req, res);
+          };
+      });
+});
+});
 //____________________________________________________//
 //_______________Einkaufslisten_______________________//
 //TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber
