@@ -6,14 +6,14 @@
 <head>
   <meta charset="UTF-8"/>
             <style>
-                h1 { 
-            color: green; 
+                h1 {
+            color: green;
         }
         h1, p, ul, tr, td{
             font-family: Georgia, 'Times New Roman', serif;
         }
         html, body {
-            height: 100%; 
+            height: 100%;
         }
         html {
             display: table;
@@ -29,39 +29,52 @@
 
 <body>
 
+  <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/de_DE/sdk.js#xfbml=1&version=v2.6";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
     <h1> Rezept: <%= rezept.name%></h1>
-    <hr> 
+    <hr>
     <table>
     <tr><td> Zutaten:</td>
-        <td> 
+        <td>
     <ul>
         <% for(var i=0; i<zutatenliste.length; i++) {%>
         <li> <%= zutatenliste[i] %></li>
         <% } %>
-    </ul> 
+    </ul>
         </td>
         </tr>
-        <tr> 
-            <td width="20px">Zubereitung:</td> 
-            <td> <%= rezept.preparation%> </td>       
-        </tr>     
-        <tr> 
+        <tr>
+            <td width="20px">Zubereitung:</td>
+            <td> <%= rezept.preparation%> </td>
+        </tr>
+        <tr>
             <td>Schwierigkeitsgrad: </td>
             <td> <%= rezept.level%></td>
-        </tr>          
+        </tr>
     </table>
     <form method="POST" action="http://localhost:3001/rezepte/<%= rezept.id%>" >
         <input type="submit" value="löschen" style="width: 200px; height:30ps"/>
     </form>
-   
+
     <form method="GET" action="http://localhost:3001/rezepte" >
         <input type="submit" value="zurück zu allen Rezepten" style="width: 200px; height:30ps" />
     </form>
-    
+
      <form method="GET" action="http://localhost:3001" >
         <input type="submit" value="zurück zur Startseite" style="width: 200px; height:30ps"/>
     </form>
-    
+
+<div class="fb-share-button" data-href="http://localhost:3001/rezepte/<%= rezept.id%>" data-layout="button" data-size="large" data-mobile-iframe="true">
+  <a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A3001%2Frezepte%2F1&amp;src=sdkpreparse">Teilen</a>
+</div>
+
 </body>
 
 </html>

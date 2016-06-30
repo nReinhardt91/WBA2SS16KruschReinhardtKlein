@@ -10,14 +10,17 @@ var fs=require('fs');
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-//Main Seite 
+//Main Seite
 app.get('/', function(req, res){
  fs.readFile('./views/main.html', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
         res.end();
-    }); 
+    });
 });
+
+const test = new Array;
+
 //Get auf alle Rezepte
 app.get('/rezepte', jsonParser, function(req,res){
     fs.readFile('./views/rezepte.ejs', {encoding: 'utf-8'}, function(err, filestring){
@@ -35,13 +38,13 @@ app.get('/rezepte', jsonParser, function(req,res){
                 }
             }
            }
-        
+
             var externalRequest=http.request(options, function(externalResponse){
                 console.log('Connected');
                 externalResponse.on("data", function(chunk){
                     var rezeptedata=JSON.parse(chunk);
-                    console.log(rezeptedata);                
-                    
+                    console.log(rezeptedata);
+
                     var html=ejs.render(filestring, {rezeptedata: rezeptedata});
                     res.setHeader('content-type', 'text/html');
                     res.writeHead(200);
@@ -52,7 +55,7 @@ app.get('/rezepte', jsonParser, function(req,res){
             externalRequest.end();
     });
 });
-      
+
 
 
 
@@ -87,14 +90,14 @@ app.get("/rezepte/:id", function(req,res){
             externalResponse.on('data', function(chunk){
                                 zutatenliste=JSON.parse(chunk);
             });
-            
+
             //Statuscodes weiterleiten!!!!
             var externalRequest = http.request(options, function(externalResponse){
                 console.log("Es wird nach Rezept gesucht");
                 console.log(zutatenliste);
                 if(externalResponse.statusCode === 404){
                     console.log("404 - Rezept not found");
-                }    
+                }
                     externalResponse.on("data", function(chunk){
                         var rezept = JSON.parse(chunk);
                         var erfolg="";
@@ -139,14 +142,14 @@ app.post("/rezepte/:id", function(req,res){
                 externalResponse.on('data', function(chunk){
                     console.log("zutatenliste wurde geloescht");
             var externalRequest = http.request(options, function(externalResponse){
-              
+
                     externalResponse.on("data", function(chunk){
                         console.log("body: "+chunk)
                         fs.readFile('./views/delRezept.ejs', function(err, page) {
                         res.writeHead(200, {'Content-Type': 'text/html'});
                         res.write(page);
                         res.end();
-                        }); 
+                        });
                     });
                 });
             externalRequest.end();
@@ -157,20 +160,20 @@ app.post("/rezepte/:id", function(req,res){
 
 //________________________________________________
 
-app.get('/addRezept', function(req, res){	
+app.get('/addRezept', function(req, res){
 	fs.readFile('./views/addRezept.ejs', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
         res.end();
-    }); 
+    });
 });
 
-app.get('/rezepte/:id/zutatenliste', function(req, res){	
+app.get('/rezepte/:id/zutatenliste', function(req, res){
 	fs.readFile('./views/addZutatenliste.ejs', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
         res.end();
-    }); 
+    });
 });
 //---------------------------------------------//
 //---------------------------------------------//
@@ -185,6 +188,10 @@ fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestri
                 contenttype: 'application/json'
               }
 
+for(i=0; i<test.length; i++){
+console.log(test[i]);
+}
+
   var rezept={
     "name": req.body.name,
     "preparation": req.body.zubereitung,
@@ -197,8 +204,8 @@ fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestri
       , function (error, response, body) {
           if (!error && response.statusCode == 200) {
               var rezeptedata=body;
-              console.log(rezeptedata);                      
-              
+              console.log(rezeptedata);
+
              var html=ejs.render(filestring, {rezeptedata: rezeptedata});
                       res.setHeader("content-type", "text/html");
                     res.writeHead(200);
@@ -223,7 +230,7 @@ app.post('/rezepte/:id/zutatenliste', function(req, res) {
                 method: 'POST',
                 contenttype: 'application/json'
               }
-  
+
   var zutat=[ req.body.zutat];
     console.log(req.body);
     console.log(req.url);
@@ -266,12 +273,12 @@ app.get('/wgs/1/einkaufsliste', jsonParser, function(req,res){
                 }
             }
            }
-        
+
             var externalRequest=http.request(options, function(externalResponse){
                 console.log('Connected');
                 externalResponse.on("data", function(chunk){
                     var einkaufslistedata=JSON.parse(chunk);
-                    console.log(einkaufslistedata);                
+                    console.log(einkaufslistedata);
                     var html=ejs.render(filestring, {einkaufslistedata: einkaufslistedata});
                     res.setHeader('content-type', 'text/html');
                     res.writeHead(200);
@@ -299,15 +306,15 @@ app.get("/wgs/1/einkaufsliste/:listid", function(req,res){
                     accept : "application/json"
                 }
             }
-    
+
             var einkaufsliste="";
-       
+
             var externalRequest = http.request(options, function(externalResponse){
                 console.log("Es wird nach Einkaufsliste"+req.params.listid+" gesucht");
                 if(externalResponse.statusCode === 404){
                     console.log("404 - Rezept not found");
                   //  res.render('main.html');
-                }    
+                }
                     externalResponse.on("data", function(chunk){
                         einkaufsliste = JSON.parse(chunk);
                         console.log(einkaufsliste);
@@ -320,7 +327,7 @@ app.get("/wgs/1/einkaufsliste/:listid", function(req,res){
             });
             externalRequest.end();
         }
-         
+
 });
 });
 
@@ -337,16 +344,16 @@ app.post("/wgs/:id/einkaufsliste/:listid", function(req,res){
             }
 
             var einkaufsliste;
-            
+
             var externalRequest = http.request(options, function(externalResponse){
-              
+
                     externalResponse.on("data", function(chunk){
                         console.log("body: "+chunk)
                         fs.readFile('./views/delListe.ejs', function(err, page) {
                         res.writeHead(200, {'Content-Type': 'text/html'});
                         res.write(page);
                         res.end();
-                        }); 
+                        });
                     });
                 });
             externalRequest.end();
@@ -357,7 +364,7 @@ app.get('/wgs/:id/addListe', function(req, res){
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
         res.end();
-    }); 
+    });
 });
 //________________________________________________________//
 //________________________________________________________//
