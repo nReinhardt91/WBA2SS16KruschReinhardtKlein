@@ -259,10 +259,11 @@ app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
 });
 
 //alle Einkaufslisten ausgeben lassen
-//TODO: Listenid zurckgeben
+//TODO: Verschachtelung falsch
 app.get('/wgs/:id/einkaufsliste', function(req, res){
 
     db.keys('einkaufsliste:*', function(err, resp){
+        console.log("resp:"+resp);
        if(resp){
            var liste = [];
 
@@ -271,30 +272,20 @@ app.get('/wgs/:id/einkaufsliste', function(req, res){
             return;
         }
         var uris=[];
-
-        db.mget(resp, function(err, rep){
-
-            rep.forEach(function(val){
-               console.log(val);
-                _json = JSON.parse(val);
-                liste.push(JSON.parse(val));
-                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/" });
-            });
-
-            liste = liste.map(function(rezept){
-                return {id: liste.id, name: liste.name, uris};
-
-                  });
-            res.status(200).json(uris);
-        }); 
            
+            resp.forEach(function(val){
+                db.lrange(val, 0, 0, function(requ, response){
+                console.log("neues"+response);
+                
+                liste.push(val);
+                });
+                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/"});
+            });   
+           res.status(200).json(uris);                     
        }else{
                 res.status(404).type('text').send('Liste konnte nicht gefunden werden.');
-                }
-        
-    
+                }           
     });
-
 });
 /*GET: eine Einkaufsliste ausgeben*/
 app.get('/wgs/:id/einkaufsliste/:listid', function(req, res){
