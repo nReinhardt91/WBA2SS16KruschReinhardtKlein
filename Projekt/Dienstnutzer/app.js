@@ -338,7 +338,7 @@ app.get('/wgs/1/einkaufsliste', jsonParser, function(req,res){
                 console.log('Connected');
                 externalResponse.on("data", function(chunk){
                     var einkaufslistedata=JSON.parse(chunk);
-                    console.log(einkaufslistedata);
+                    console.log(JSON.parse(chunk));
                     var html=ejs.render(filestring, {einkaufslistedata: einkaufslistedata});
                     res.setHeader('content-type', 'text/html');
                     res.writeHead(200);
