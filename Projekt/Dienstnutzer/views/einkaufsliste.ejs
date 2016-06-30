@@ -31,6 +31,7 @@
 
     <h1>Alle Einkaufslisten:</h1>
   <hr>
+    Die Links funktionieren noch nicht,<br> daher über Buttons gehen <br>(noch fehlerhafte Rückgabewerte)
     <ul> 
 <% for(var i=0; i<einkaufslistedata.length; i++) {%>
        <li> <a href="<%= einkaufslistedata[i].uri %>"> <%= einkaufslistedata[i].uri%> </a>
@@ -38,13 +39,13 @@
 <% } %>
 </ul>
          <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste/1" >
-        <input type="submit" value="Einkaufsliste 1" style="width: 200px; height:30ps"/>
+        <input type="submit" value="Einkaufsliste 1" style="width: 200px; height:30px"/>
     </form>
         <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste/2" >
-        <input type="submit" value="Einkaufsliste 2" style="width: 200px; height:30ps"/>
+        <input type="submit" value="Einkaufsliste 2" style="width: 200px; height:30px"/>
     </form>
     <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste/3" >
-        <input type="submit" value="Einkaufsliste 3" style="width: 200px; height:30ps"/>
+        <input type="submit" value="Einkaufsliste 3" style="width: 200px; height:30px"/>
     </form>
      <form method="GET" action="http://localhost:3001" >
         <input type="submit" value="zurück zur Startseite" style="width: 200px; height:30ps"/>

@@ -2,9 +2,7 @@
 var express= require('express');
 var bodyParser=require('body-parser');
 var redis=require('redis');
-
 var db=redis.createClient();
-
 var app=express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -14,17 +12,18 @@ var uri;
 
 //Rezept hinzufügen
 app.post('/rezepte', function(req, res){
-
+    
     var newRezept = req.body;
-
+    
     db.incr('id:rezepte', function(err, rep){
         newRezept.id = rep;
-        //uri="http://localhost:3000/rezepte/"+newRezept.id;
+        
         db.set('rezepte:'+newRezept.id, JSON.stringify(newRezept), function(err, rep){
-            res.status(200).send(""+newRezept.id);
+             res.status(200).send(newRezept);
         });
     });
 });
+
 //Einzelnes Rezept ausgeben
 //Auf PUT stellen und oben http:/localhost:3000/rezepte/ <-- hier die ID eintragen bsp(http:/localhost:3000/rezepte/2) Eintrag
 //wird angezeigt
@@ -118,7 +117,7 @@ app.put('/rezepte/:id', function(req, res){
 /*----------------------------------------*/
 /*------------Zutatenliste----------------*/
 app.post('/rezepte/:id/zutatenliste', function(req, res){
-    console.log("wurde aufgerufen");
+    console.log("POST zutatenliste");
     var listid=parseInt(req.params.id);
     var newList = req.body;
     var neueID="zutatenliste:"+listid;
@@ -211,20 +210,22 @@ app.delete('/wgs/:id', function(req, res){
 
 /*-----*/
 /*POST: einer WG eine Einkaufsliste hinzufügen*/
-/*TODO: beendet den Vorgang nicht, legt aber die neue Liste an*/
+/* Rückgabe bisher ganzes Objekt  (wie kann man in eine Liste einfügen)*/
 app.post('/wgs/:id/einkaufsliste', function(req, res){
     var wgID=parseInt(req.params.id);
     var newList = req.body;
-    
+    console.log(newList);
     db.incr('id:einkaufsliste', function(err, rep){
-        newList.id = rep;
-        var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste/"+newList.id;
-        db.rpush('einkaufsliste:'+newList.id, newList.id, function(err, rep){
+        newID = rep;
+        newListhole=newList;
+        newListhole.id=rep;
+        db.rpush('einkaufsliste:'+rep, JSON.stringify(newID),function(err, rep){ });
+        db.rpush('einkaufsliste:'+rep, JSON.stringify(newList), function(err, rep){
         });
-        console.log(JSON.stringify(newList));
-        db.rpush('einkaufsliste:'+newList.id, JSON.stringify(newList), function(err, rep){
-            res.status(201).json(uri);
-        });
+        db.lrange('einkaufsliste:'+rep, 0, -1, function(requ, resp){
+                console.log(resp);
+                res.status(201).json(resp);
+                });
     });
 });
 
@@ -232,22 +233,22 @@ app.post('/wgs/:id/einkaufsliste/:listid', function(req, res){
     var listid=parseInt(req.params.listid);
     var wgID=parseInt(req.params.id);
     var newList = JSON.stringify(req.body);
-    console.log(newList);
-    var neueID="einkaufsliste:"+listid;
     var uri="http://localhost:3000/wgs/"+wgID+"/einkaufsliste/"+listid;
-    db.rpush(neueID, newList, function(err, rep){
-            res.json(uri);
+    db.rpush('einkaufsliste'+listid, newList, function(err, rep){
     });
+    db.lrange('einkaufsliste:'+listid, 0, -1, function(requ, resp){
+                console.log(resp);
+                res.status(200).json(resp);
+                });
 });
 
-
+//TODO: nur neues zurück??
 app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
-    
     db.exists('einkaufsliste:'+req.params.listid, function(err, rep) {
         if (rep == 1) {
             var updateListe = req.body;
-            updateListe.id = req.params.listid;
-            db.set('einkaufsliste:' + req.params.id, JSON.stringify(updateListe), function(err, rep){
+            console.log(req.body);
+            db.rpush('einkaufsliste:'+req.params.listid, JSON.stringify(updateListe), function(err, rep){
                 res.status(200).json(updateListe);
             });
         }
@@ -258,33 +259,33 @@ app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
 });
 
 //alle Einkaufslisten ausgeben lassen
-//TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber
+//TODO: Verschachtelung falsch
 app.get('/wgs/:id/einkaufsliste', function(req, res){
-        var wgid=req.params.id;
-    db.keys('einkaufsliste:*', function(err, rep){
-        var einkaufslisten = [];
-        var uris=[];
-        if (rep.length == 0) {
-            res.json(einkaufslisten);
+
+    db.keys('einkaufsliste:*', function(err, resp){
+        console.log("resp:"+resp);
+       if(resp){
+           var liste = [];
+
+        if (resp.length == 0) {
+            res.json(liste);
             return;
         }
-        var ziel="";
-            rep.forEach(function(val){
-                db.lrange(val, 0, 0, function(request, resp){ 
-                    ziel=parseInt(resp);
-                    console.log(ziel); 
+        var uris=[];
+           
+            resp.forEach(function(val){
+                db.lrange(val, 0, 0, function(requ, response){
+                console.log("neues"+response);
+                
+                liste.push(val);
                 });
-                uris.push({"uri": "http://localhost:3001/wgs/"+wgid+"/einkaufsliste/"+ziel});
-                einkaufslisten.push(val);
-                
-            });
-                
-                
-            einkaufslisten = einkaufslisten.map(function(einkaufsliste){
-                return {listid: einkaufslisten.listid, name: einkaufslisten.name, uris};
-                  });
-            res.json(uris);
-        });
+                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/"});
+            });   
+           res.status(200).json(uris);                     
+       }else{
+                res.status(404).type('text').send('Liste konnte nicht gefunden werden.');
+                }           
+    });
 });
 /*GET: eine Einkaufsliste ausgeben*/
 app.get('/wgs/:id/einkaufsliste/:listid', function(req, res){
@@ -297,7 +298,6 @@ app.get('/wgs/:id/einkaufsliste/:listid', function(req, res){
                 res.status(200).json(resp);
                 });
             } else {
-                
                 console.log('nicht vorhanden');
                 res.status(404).type('text').send("Einkaufsliste existiert nicht");
             }
@@ -325,11 +325,8 @@ app.delete('/wgs/:id/einkaufsliste/:listid', function(req, res){
 
 //Zutat hinzufügen
 app.post('/zutaten', function(req, res){
-
     var newZutat = req.body;
-
     db.incr('id:zutaten', function(err, rep){
-
         newZutat.id = rep;
         uri="http://localhost:3000/zutaten/"+newZutat.id;
         db.set('zutaten:'+newZutat.id, JSON.stringify(newZutat), function(err, rep){
@@ -347,7 +344,6 @@ app.post('/zutaten', function(req, res){
 //Auf PUT stellen und oben http:/localhost:3000/zutat/ <-- hier die ID eintragen bsp(http:/localhost:3000/zutat/2) Eintrag
 //wird angezeigt
 app.get('/zutaten/:id', function(req, res){
-
     db.get('zutaten:'+req.params.id, function(err, rep){
         if(rep){
             res.status(200).type('json').send(rep);
@@ -357,29 +353,11 @@ app.get('/zutaten/:id', function(req, res){
         }
     });
 });
-//Nur Beschreibung ausgeben
-//app.get('/rezepte/:id/name', function(req,res){
-//
-//        db.hget('rezept:'+req.params.id+'/'+req.params.name, function(err, rep){
-//            if(rep){
-//                res.type('json').send(rep);
-//            }
-//            else {
-//                res.status(404).type('text').send('Das Rezept mit dem Namen ' +req.params.name+' wurde nicht gefunden');
-//            }
-//        });
-//
-//
-//});
-//
-
 
 //Alle Zutaten ausgeben
 app.get('/zutaten', function(req, res){
-
     db.keys('zutaten:*', function(err, rep){
         var zutaten = [];
-
         if (rep.length == 0) {
             res.json(zutaten);
             return;
@@ -389,18 +367,13 @@ app.get('/zutaten', function(req, res){
        /* rep.forEach(function(err, test){
             uris.push("http://localhost:3000/rezepte/"+rep.id);
         });*/
-
         db.mget(rep, function(err, rep){
-
             rep.forEach(function(val){
                 zutaten.push(JSON.parse(val));
                 uris.push("http://localhost:3000/zutaten/");
-
             });
-
-            zutaten = zutaten.map(function(rezept){
+                zutaten = zutaten.map(function(rezept){
                 return {id: zutaten.id, name: zutaten.name};
-
             });
             res.status(200).json(uris);
         });
