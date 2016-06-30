@@ -201,7 +201,7 @@ fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestri
               
              var html=ejs.render(filestring, {rezeptedata: rezeptedata});
                       res.setHeader("content-type", "text/html");
-                    res.writeHead(200);
+                      res.writeHead(200);
                       res.write(html);
                       res.end();
           }else {
@@ -227,8 +227,7 @@ app.post('/rezepte/:id/zutatenliste', function(req, res) {
   var zutat=[ req.body.zutat];
     console.log(req.body);
     console.log(req.url);
-    request.post(
-      'http://localhost:3000'+req.url, {
+    request.post('http://localhost:3000'+req.url, {
           json: zutat
       , }
       , function (error, response, body) {
@@ -257,17 +256,19 @@ app.post('/wgs/1/einkaufsliste', function(req, res) {
                 method: 'POST',
                 contenttype: 'application/json'
               }
+  
+  
   var name={"name": req.body.name};
-  var zutat=[req.body.zutat];
-        
+    //Ausgabe {"name": hier}
     console.log(req.body);
     request.post(
       'http://localhost:3000/wgs/1/einkaufsliste', {
-          json: zutat
+          json: name
       , }
       , function (error, response, body) {
           if (!error && response.statusCode == 201) {
-            var zutatdata=body;
+             var datenbody=body;
+              var zutatdata=parseInt(datenbody[0]);
               console.log(zutatdata);
               var html=ejs.render(filestring, {zutatdata: zutatdata});
                       res.setHeader("content-type", "text/html");
@@ -281,7 +282,7 @@ app.post('/wgs/1/einkaufsliste', function(req, res) {
       });
 });
 });
-
+//TODO Fehlerhaft
 app.put('/wgs/1/einkaufsliste/:listid', function(req, res) {
     fs.readFile('./views/addListe.ejs', {encoding: 'utf-8'}, function(err, filestring){
   console.log(req.params.listid);
@@ -292,10 +293,10 @@ app.put('/wgs/1/einkaufsliste/:listid', function(req, res) {
                 method: 'PUT',
                 contenttype: 'application/json'
               }
-  var zutat=[req.body.zutat];
+    var zutat=[req.body.zutat];
         
-    console.log(req.body);
-    console.log(req.url);
+    console.log("blabla"+req.body);
+    console.log(req.body.zutat);
     request.post(
       'http://localhost:3000/wgs/1/einkaufsliste/'+listid, {
           json: zutat
@@ -303,6 +304,7 @@ app.put('/wgs/1/einkaufsliste/:listid', function(req, res) {
       , function (error, response, body) {
           if (!error && response.statusCode == 201) {
               var zutatlisteID=body;
+              console.body("hier:"+zutatlisteID);
               var html=ejs.render(filestring, {zutatlisteID: zutatlisteID});
                       res.setHeader("content-type", "text/html");
                       res.writeHead(200);
