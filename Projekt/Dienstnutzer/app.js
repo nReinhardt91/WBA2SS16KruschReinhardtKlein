@@ -284,39 +284,29 @@ app.post('/wgs/1/einkaufsliste', function(req, res) {
 });
 //TODO Fehlerhaft
 app.put('/wgs/1/einkaufsliste/:listid', function(req, res) {
-    fs.readFile('./views/addListe.ejs', {encoding: 'utf-8'}, function(err, filestring){
-  console.log(req.params.listid);
+
+  console.log("listID:"+req.params.listid);
   var options={
                 host: 'localhost',
                 port:  3000,
-                path: '/wgs/1/einkaufsliste/'+listid,
+                path: '/wgs/1/einkaufsliste/'+req.params.listid,
                 method: 'PUT',
                 contenttype: 'application/json'
               }
-    var zutat=[req.body.zutat];
-        
-    console.log("blabla"+req.body);
-    console.log(req.body.zutat);
-    request.post(
-      'http://localhost:3000/wgs/1/einkaufsliste/'+listid, {
-          json: zutat
-      , }
-      , function (error, response, body) {
-          if (!error && response.statusCode == 201) {
-              var zutatlisteID=body;
-              console.body("hier:"+zutatlisteID);
-              var html=ejs.render(filestring, {zutatlisteID: zutatlisteID});
-                      res.setHeader("content-type", "text/html");
-                      res.writeHead(200);
-                      res.write(html);
-                      res.end();
-          }
-          else {
-              handleInternalError(req, res);
-          };
+
+  var externalRequest=http.request(options, function(externalResponse){
+      externalResponse.on("data", function(chunk){
+      console.log(chunk+" hinzufügen");
+      res.send(chunk);
+      res.end();
       });
+  });
+      externalRequest.setHeader("content-type", "application/json");
+					 							externalRequest.write(JSON.stringify(req.body));
+					 							console.log("Liste wurde überarbeitet:"+req.body);
+					 							externalRequest.end();     
 });
-});
+
 //____________________________________________________//
 //_______________Einkaufslisten_______________________//
 //TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber

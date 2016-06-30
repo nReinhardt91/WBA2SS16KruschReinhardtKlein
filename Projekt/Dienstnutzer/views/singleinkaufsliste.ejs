@@ -9,7 +9,7 @@
                 h1 { 
             color: green; 
         }
-        h1, p{
+        h1, p, label{
             font-family: Georgia, 'Times New Roman', serif;
         }
         html, body {
@@ -24,6 +24,30 @@
         }
         textarea, input { font-size: 14px; }
             </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/js/jquery" type="text/javascript"></script>
+    <script>
+    $(function(){
+      $("#putliste").click(function(event) {
+        //Abschicken und Seite neu laden unterbinden
+        event.preventDefault();
+        var newList = [ $("#zutat").val()];
+        $.ajax({
+          type: 'PUT',
+          host: 'localhost',
+          url: '#' ,
+          contentType: 'application/json',
+          data: JSON.stringify(newList),
+          success: function(data){
+            $('#neueZutat').html(data);
+          },
+          error: function(xhr, options, e) {
+    			$('#mel').html(e);
+          }
+        });
+      });
+    });
+  </script>
 </head>
 
 <body>
@@ -35,28 +59,29 @@
                         <% for(var i=1; i<einkaufsliste.length; i++) {%>
                         <li> <%= einkaufsliste[i] %></li>
                             <% } %>
-                    </ul>
+                </ul>
+                           <div id="neueZutat">
+                        </div>
 <!-- hier die ID übergeben um zu löschen --> 
-<form method="POST" action="http://localhost:3001/wgs/1/einkaufsliste/<%= einkaufsliste[0]%>" >
-        <input type="submit" value="löschen" style="width: 200px; height:30ps"/>
+
+
+    <form>
+    <label class="ser" for="zutat">Zutat hinzufügen</label><br>
+              <input type="text" id="zutat" name="zutat" required><br>
+    <input type="submit" id="putliste" name="submit" value="Speichern" style="width: 200px; height:30px">
     </form>
-
- 
-
-    
- <!--   <form method="post" action="#">
-       <p> Zutat hinzufügen: </p>
-        <textarea id="zutat"  name="zutat" rows="2" cols="30"></textarea><br>
-       <input name="_method" type="hidden" value="put" />
-        <input type="submit" value="zutat hinzufügen" style="width: 200px; height:30ps"/>
-   </form>
--->
+    <form method="POST" action="http://localhost:3001/wgs/1/einkaufsliste/<%= einkaufsliste[0]%>" >
+        <input type="submit" value="löschen" style="width: 200px; height:30px"/>
+    </form>
+    <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste/<%= einkaufsliste[0]%>" >
+        <input type="submit" value="neu laden" style="width: 200px; height:30px"/>
+    </form>
     <form method="GET" action="http://localhost:3001/wgs/1/einkaufsliste" >
-        <input type="submit" value="zurück zu allen Listen" style="width: 200px; height:30ps" />
+        <input type="submit" value="zurück zu allen Listen" style="width: 200px; height:30px" />
     </form>
     
      <form method="GET" action="http://localhost:3001" >
-        <input type="submit" value="zurück zur Startseite" style="width: 200px; height:30ps"/>
+        <input type="submit" value="zurück zur Startseite" style="width: 200px; height:30px"/>
     </form>
 </body>
 

@@ -242,14 +242,13 @@ app.post('/wgs/:id/einkaufsliste/:listid', function(req, res){
                 });
 });
 
-//TODO: nur ID zurück??
+//TODO: nur neues zurück??
 app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
     db.exists('einkaufsliste:'+req.params.listid, function(err, rep) {
         if (rep == 1) {
             var updateListe = req.body;
             console.log(req.body);
-            console.log(req.params.listid);
-            db.rpush('einkaufsliste:'+req.params.id, JSON.stringify(updateListe), function(err, rep){
+            db.rpush('einkaufsliste:'+req.params.listid, JSON.stringify(updateListe), function(err, rep){
                 res.status(200).json(updateListe);
             });
         }
@@ -260,32 +259,6 @@ app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
 });
 
 //alle Einkaufslisten ausgeben lassen
-//TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber
-//app.get('/wgs/:id/einkaufsliste', function(req, res){
-//        var wgid=req.params.id;
-//    db.keys('einkaufsliste:*', function(err, rep){
-//        var einkaufslisten = [];
-//        var uris=[];
-//        if (rep.length == 0) {
-//            res.json(einkaufslisten);
-//            return;
-//        }
-//            rep.forEach(function(val){
-//               _json = JSON.parse(val);
-//          //      console.log(_json);
-//                einkaufslisten.push(JSON.parse(val));
-//                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/"+val.listid});
-//                einkaufslisten.push(val);
-//                console.log(uris);
-//            });
-//                
-//                
-//            einkaufslisten = einkaufslisten.map(function(einkaufsliste){
-//                return {listid: einkaufslisten.listid, name: einkaufslisten.name, uris};
-//                  });
-//            res.json(uris);
-//        });
-//});
 //TODO: Listenid zurckgeben
 app.get('/wgs/:id/einkaufsliste', function(req, res){
 
@@ -305,7 +278,7 @@ app.get('/wgs/:id/einkaufsliste', function(req, res){
                console.log(val);
                 _json = JSON.parse(val);
                 liste.push(JSON.parse(val));
-                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/??" });
+                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/" });
             });
 
             liste = liste.map(function(rezept){
