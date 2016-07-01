@@ -7,6 +7,7 @@ var http=require('http');
 var ejs=require('ejs');
 var fs=require('fs');
 
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
@@ -116,7 +117,7 @@ app.get("/rezepte/:id", function(req,res){
 });
 });
 //Rezept löschen
-// TODO: das Rezept wird geloescht, bleibt allerdings auf der Seite... wohin als naechstes. Ausgabe ob erfolgreich geloescht wurde oder nicht
+
 app.post("/rezepte/:id", function(req,res){
     console.log(req.params.id);
             var options = {
@@ -177,7 +178,6 @@ app.get('/rezepte/:id/zutatenliste', function(req, res){
 });
 //---------------------------------------------//
 //---------------------------------------------//
-// sofunktioniert es nur teilweise//
 app.post('/rezepte', function(req, res) {
 fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestring){
   var options={
@@ -289,7 +289,6 @@ app.post('/wgs/1/einkaufsliste', function(req, res) {
       });
 });
 });
-//TODO Fehlerhaft
 app.put('/wgs/1/einkaufsliste/:listid', function(req, res) {
 
   console.log("listID:"+req.params.listid);
@@ -316,7 +315,6 @@ app.put('/wgs/1/einkaufsliste/:listid', function(req, res) {
 
 //____________________________________________________//
 //_______________Einkaufslisten_______________________//
-//TODO: listid ist falsch, immer auf 0 gesetzt, siehe Dienstgeber
 app.get('/wgs/1/einkaufsliste', jsonParser, function(req,res){
     fs.readFile('./views/einkaufsliste.ejs', {encoding: 'utf-8'}, function(err, filestring){
         if (err){

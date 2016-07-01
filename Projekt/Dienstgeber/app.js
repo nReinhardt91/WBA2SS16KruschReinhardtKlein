@@ -210,7 +210,6 @@ app.delete('/wgs/:id', function(req, res){
 
 /*-----*/
 /*POST: einer WG eine Einkaufsliste hinzufügen*/
-/* Rückgabe bisher ganzes Objekt  (wie kann man in eine Liste einfügen)*/
 app.post('/wgs/:id/einkaufsliste', function(req, res){
     var wgID=parseInt(req.params.id);
     var newList = req.body;
@@ -259,7 +258,6 @@ app.put('/wgs/:id/einkaufsliste/:listid', function(req, res){
 });
 
 //alle Einkaufslisten ausgeben lassen
-//TODO: Verschachtelung falsch
 app.get('/wgs/:id/einkaufsliste', function(req, res){
     var uris=[];
     db.keys("einkaufsliste:*", function(err, listen){
@@ -274,31 +272,7 @@ app.get('/wgs/:id/einkaufsliste', function(req, res){
     });
     });
 });
-//    db.keys('einkaufsliste:*', function(err, resp){
-//        console.log("resp:"+resp);
-//       if(resp){
-//           var liste = [];
-//
-//        if (resp.length == 0) {
-//            res.json(liste);
-//            return;
-//        }
-//        var uris=[];
-//           
-//            resp.forEach(function(val){
-//                db.lrange(val, 0, 0, function(requ, response){
-//                console.log("neues"+response);
-//                
-//                liste.push(val);
-//                });
-//                uris.push({"uri": "http://localhost:3001/wgs/1/einkaufsliste/"});
-//            });   
-//           res.status(200).json(uris);                     
-//       }else{
-//                res.status(404).type('text').send('Liste konnte nicht gefunden werden.');
-//                }           
-//    });
-//});
+
 /*GET: eine Einkaufsliste ausgeben*/
 app.get('/wgs/:id/einkaufsliste/:listid', function(req, res){
     var listid=parseInt(req.params.listid);

@@ -1,0 +1,31 @@
+<style type="text/css">
+html{
+    display: table;
+    margin:auto;
+    margin-top: 20px;
+}
+body {
+    display: table-cell;
+    display:table;
+    margin:auto;
+    margin-top: 20px;
+}
+textarea, input { 
+    font-size: 14px; 
+}
+h1 { 
+    color: green; 
+ }
+h1, p{
+    font-family: Georgia, 'Times New Roman', serif;
+}
+h1, p, li{
+    font-family: Georgia, 'Times New Roman', serif;
+}
+h1, p, label{
+    font-family: Georgia, 'Times New Roman', serif;
+}
+html, body {
+    height: 100%; 
+}
+</style>
