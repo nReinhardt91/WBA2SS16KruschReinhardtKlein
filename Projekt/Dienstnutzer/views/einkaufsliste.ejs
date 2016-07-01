@@ -29,7 +29,7 @@
 
 <body>
 
-    <h1>Alle Einkaufslisten:</h1>
+    <h1>Einkaufslisten:</h1>
   <hr>
     <ul> 
 <% for(var i=0; i<einkaufslistedata.length; i++) {%>
@@ -37,9 +37,11 @@
 </li>
 <% } %>
 </ul>
-
+        <form method="GET" action="http://localhost:3001/wgs/1/addListe" >
+        <input type="submit" value="Einkaufsliste anlegen" style="width: 200px; height:40px"/>
+    </form>
      <form method="GET" action="http://localhost:3001" >
-        <input type="submit" value="zurück zur Startseite" style="width: 200px; height:30ps"/>
+        <input type="submit" value="zurück zur Startseite" style="width: 200px; height:40px"/>
     </form>
 </body>
 
