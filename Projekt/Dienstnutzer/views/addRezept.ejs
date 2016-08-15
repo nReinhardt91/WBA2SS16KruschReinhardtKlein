@@ -2,13 +2,63 @@
 <html>
     <head>
     <meta charset="UTF-8"/>
-
-<link rel="stylesheet" type="text/css" href="/css/style.css">  
-    </head>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="/js/jquery" type="text/javascript"></script>
+    <script>
+        
+    $(function(){
+      $("button").click(function(event) {
+        //Abschicken, Seite neu laden unterbinden
+          alert("New ++++++++");
+        event.preventDefault();
+           $("#zutatenid").show();
+          var newRezept = {
+            name: $("#name").val(),
+            zubereitung: $("#zubereitung").val(),
+            level: $("#level").val()
+          };
+                 $.ajax({
+                type: 'POST',
+                host: 'localhost',
+                url: '/rezepte' ,
+                contentType: 'application/json',
+                data: JSON.stringify(newRezept),
+                success: function(data){
+                    var u = data;
+                    $('#addRezept').html(u.id);
+                    alert('sucess');
+                    
+                    },
+                });
+        });
+    });
+        
+    $(function(){
+             var idRezept=<%= rezeptedata.id%>;
+/*        var newZutat = [ $("#zutat").val()];
+            $.ajax({
+                type: 'POST',
+                host: 'localhost',
+                url: '/rezepte/'+idRezept+'/zutatenliste' ,
+                contentType: 'application/json',
+                data: JSON.stringify(newZutat),
+                success: function(data){
+                    $('#neueZutat').html(data);
+                },
+            });*/
+    });
+  </script>
+</head>
   <body>
+
       <h1>Rezept hinzufügen</h1>
       <hr>
-    <form id="addRezept" action="http://localhost:3001/rezepte/" method="post" enctype="application/x-www-form-urlencoded">
+    <form id="addRezept" action="http://localhost:3001/rezepte/<%=u.id%>/zutatenliste" method="post" enctype="application/x-www-form-urlencoded">
+      
       <p><u>Rezeptname:</u></p>
         <input type="text" id="name" name="name"></br>
       <p><u>Zubereitung:</u></p>
@@ -16,9 +66,27 @@
       <p><u>Level:</u></br>
         <label for="1">1</label><input type="radio" name="level" id="l1" value="1"><br>
         <label for="2">2</label><input type="radio" name="level" id="l2" value="2"><br>
+
         <label for="3">3</label><input type="radio" name="level" id="l3" value="3"><br><br>
-		  <input id="submit" type="submit" value="Rezept erstellen" style="width: 320px; height:40px"></form>    
-    <a href="http://localhost:3001/rezepte/<%= rezeptedata.id%>/zutatenliste"> <input type="button" value="Zutat hinzufügen" style="width: 320px; height:40px"</a>
+      <input id="submit" type="submit" value="Rezept erstellen" style="width: 320px; height:40px"></form>    
+ 
+      </form>
+    <section id="zutatenid" style="display:none">
+      <!-- <a href="http://localhost:3001/rezepte/<%= rezeptedata.id%>/zutatenliste"> <input type="button" value="Zutat hinzufügen" style="width: 320px; height:40px"</a>-->
+    
+        
+        
+        <form id="addZutatenliste" action="#" method="post" enctype="application/x-www-form-urlencoded">
+        <h1>Zutat hinzufügen:</h1>
+        
+        <textarea id="zutat"  name="zutat" rows="2" cols="30"></textarea>
+        <br>
+        <br>
+		  <input id="zutatsubmit" type="submit" value="Zutat hinzufügen" style="width: 320px; height:40px">
+            <div id="neueZutat">
+                        </div>
+      </form>
+        </section>
      <form method="GET" action="http://localhost:3001" >
         <input type="submit" value="Startseite" style="width: 320px; height:40px"/>
     </form>

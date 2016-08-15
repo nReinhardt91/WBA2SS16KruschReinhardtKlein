@@ -161,7 +161,7 @@ app.post("/rezepte/:id", function(req,res){
 
 //________________________________________________
 
-app.get('/addRezept', function(req, res){
+app.get('/neuesRezept', function(req, res){
 	fs.readFile('./views/addRezept.ejs', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
@@ -180,15 +180,28 @@ app.get('/rezepte/:id/zutatenliste', function(req, res){
 //---------------------------------------------//
 app.post('/rezepte', function(req, res) {
 fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestring){
-  var options={
-                host: 'localhost',
-                port:  3000,
-                path: '/rezepte',
-                method: 'POST',
-                contenttype: 'application/json'
-              }
+   var rezept={
+    "name": req.body.name,
+    "preparation": req.body.zubereitung,
+    "level":req.body.level,
+  };
+  request.post(
+      'http://localhost:3000/rezepte', {
+          json: rezept
+, }
+      , function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+              var rezeptedata=body;
+              console.log(rezeptedata);
+              res.end();
+          }else {
+              handleInternalError(req, res);
+          };
+      });
+});
+});
 
-for(i=0; i<test.length; i++){
+/*for(i=0; i<test.length; i++){
 console.log(test[i]);
 }
 
@@ -207,7 +220,7 @@ console.log(test[i]);
               console.log(rezeptedata);
 
              var html=ejs.render(filestring, {rezeptedata: rezeptedata});
-                      res.setHeader("content-type", "text/html");
+                     res.setHeader("content-type", "text/html");
                       res.writeHead(200);
                       res.write(html);
                       res.end();
@@ -216,7 +229,7 @@ console.log(test[i]);
           };
       });
 });
-});
+});*/
 
 
 
@@ -417,7 +430,7 @@ app.post("/wgs/:id/einkaufsliste/:listid", function(req,res){
             externalRequest.end();
 });
 
-app.get('/wgs/:id/addListe', function(req, res){
+app.get('/wgs/:id/liste', function(req, res){
 	fs.readFile('./views/addListe.ejs', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(page);
