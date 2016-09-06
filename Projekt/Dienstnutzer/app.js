@@ -193,6 +193,7 @@ fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestri
           if (!error && response.statusCode == 200) {
               var rezeptedata=body;
               console.log(rezeptedata);
+              res.json(rezeptedata);
               res.end();
           }else {
               handleInternalError(req, res);
@@ -201,35 +202,7 @@ fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestri
 });
 });
 
-/*for(i=0; i<test.length; i++){
-console.log(test[i]);
-}
 
-  var rezept={
-    "name": req.body.name,
-    "preparation": req.body.zubereitung,
-    "level":req.body.level,
-  };
-  request.post(
-      'http://localhost:3000/rezepte', {
-          json: rezept
-, }
-      , function (error, response, body) {
-          if (!error && response.statusCode == 200) {
-              var rezeptedata=body;
-              console.log(rezeptedata);
-
-             var html=ejs.render(filestring, {rezeptedata: rezeptedata});
-                     res.setHeader("content-type", "text/html");
-                      res.writeHead(200);
-                      res.write(html);
-                      res.end();
-          }else {
-              handleInternalError(req, res);
-          };
-      });
-});
-});*/
 
 
 

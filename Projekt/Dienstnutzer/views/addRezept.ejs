@@ -11,38 +11,33 @@
         $("#addRezept").submit(function(event) {
           event.preventDefault();
           $("#zutatenid").show();
-
+        
           var newRezept = {
             name: $("#name").val(),
             zubereitung: $("#zubereitung").val(),
             level: $(".level:checked").val()
           };
-            
+
                 $.ajax({
                 type: 'POST',
                 host: 'localhost',
                 port: 3001,
                 url: '/rezepte' ,
                 data: JSON.stringify(newRezept),
-                dataType: json,
-                contentType: "application/json; charset=utf-8",               
-                success: function(data){ 
+                contentType: "application/json",               
+                complete: function(data){ 
                     // noch id eintragen
-                    data=JSON.parse(data);
-                    console.dir(data);
-                    
-                   /* var tmp=data;
-                    alert("neu:"+tmp);
-                   $('#rezeptID').html(tmp.id);*/
-                    
+                    var tmp=JSON.stringify(data.responseJSON.id);
+                    $('#rezeptID').html(tmp);
                 },
                 failure: function(e){alert("fehler");}                      
                 });
         });
     });
+        
     $(document).ready(function(){
         $("#addZutatenliste").submit(function(event) {
-          event.preventDefault();
+            event.preventDefault();
             var id=$("#rezeptID").val();
 
             var newZutat = {
@@ -69,9 +64,9 @@
       <hr>
         <form id="addRezept" enctype="application/x-www-form-urlencoded">
            <p><u>Rezeptname:</u></p>
-            <input type="text" id="name" name="name"></br>
+            <input type="text" id="name" name="name" required></br>
             <p><u>Zubereitung:</u></p>
-            <textarea id="zubereitung"  name="zubereitung" rows="2" cols="30"></textarea>
+            <textarea id="zubereitung"  name="zubereitung" rows="2" cols="30" required></textarea>
             <p><u>Level:</u></p>
             <input type="radio" class="level" name="level" value="1" />1 <br>
             <input type="radio" class="level" name="level" value="2" />2 <br>
