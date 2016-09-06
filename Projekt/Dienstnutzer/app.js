@@ -180,7 +180,6 @@ app.get('/rezepte/:id/zutatenliste', function(req, res){
 //---------------------------------------------//
 app.post('/rezepte', function(req, res) {
 fs.readFile('./views/addRezept.ejs', {encoding: 'utf-8'}, function(err, filestring){
-    var rezept1;
    var rezept={
     "name": req.body.name,
     "preparation": req.body.zubereitung,

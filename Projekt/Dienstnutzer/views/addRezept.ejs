@@ -10,7 +10,6 @@
     $(document).ready(function(){
         $("#addRezept").submit(function(event) {
           event.preventDefault();
-          alert("Newww");
           $("#zutatenid").show();
 
           var newRezept = {
@@ -18,15 +17,46 @@
             zubereitung: $("#zubereitung").val(),
             level: $(".level:checked").val()
           };
-         //alert("Newww+"+JSON.stringify(newRezept.level));
+            
                 $.ajax({
                 type: 'POST',
                 host: 'localhost',
                 port: 3001,
                 url: '/rezepte' ,
                 data: JSON.stringify(newRezept),
+                dataType: json,
                 contentType: "application/json; charset=utf-8",               
-                success: function(data){alert(data);},
+                success: function(data){ 
+                    // noch id eintragen
+                    data=JSON.parse(data);
+                    console.dir(data);
+                    
+                   /* var tmp=data;
+                    alert("neu:"+tmp);
+                   $('#rezeptID').html(tmp.id);*/
+                    
+                },
+                failure: function(e){alert("fehler");}                      
+                });
+        });
+    });
+    $(document).ready(function(){
+        $("#addZutatenliste").submit(function(event) {
+          event.preventDefault();
+            var id=$("#rezeptID").val();
+
+            var newZutat = {
+            zutat: $("#zutat").val()}
+            $.ajax({
+                type: 'POST',
+                host: 'localhost',
+                port: 3001,
+                url: '/rezepte/'+id+'/zutatenliste',
+                data: JSON.stringify(newZutat),
+                contentType: "application/json; charset=utf-8",               
+                success: function(data){ 
+                    alert("Zutat hinzugefügt");
+                },
                 failure: function(e){alert("fehler");}                      
                 });
         });
@@ -42,29 +72,24 @@
             <input type="text" id="name" name="name"></br>
             <p><u>Zubereitung:</u></p>
             <textarea id="zubereitung"  name="zubereitung" rows="2" cols="30"></textarea>
-      <p><u>Level:</u></p>
+            <p><u>Level:</u></p>
             <input type="radio" class="level" name="level" value="1" />1 <br>
             <input type="radio" class="level" name="level" value="2" />2 <br>
-            <input type="radio" class="level" name="level" value="3" />3 <br><br>
-    
-            <!--<label for="1">1</label><input type="radio" name="level" id="l1" value="1"><br>
-            <label for="2">2</label><input type="radio" name="level" id="l2" value="2"><br>
-            <label for="3">3</label><input type="radio" name="level" id="l3" value="3"><br><br>-->
-            
-    <button type="submit" style="width: 320px; height:40px">Rezept speichern</button>
-<!--    <input type="submit" id="rezepthinzu" name="submit" value="Rezept speichern" style="width: 320px; height:40px">-->
-        </form>
+            <input type="radio" class="level" name="level" value="3" />3 <br><br> 
+            <button type="submit" style="width: 320px; height:40px">Rezept speichern</button>
+        </form><br>
         <section id="zutatenid" style="display:none">
-                <form id="addZutatenliste" action="#" method="post" enctype="application/x-www-form-urlencoded">
-                <h3>Zutat hinzufügen:</h3>
+                <form id="addZutatenliste" enctype="application/x-www-form-urlencoded">
+                <div id="id"> ID: <textarea id="rezeptID"  name="rezeptNummer" rows="1" cols="1"></textarea> </div>
+                <p>Zutat hinzufügen:</p>
                 <textarea id="zutat"  name="zutat" rows="2" cols="30"></textarea>
                 <br><br>
-                <input id="submit" type="submit" value="Zutat hinzufügen" style="width: 320px; height:40px">
+                <button type="submit" style="width: 320px; height:40px">Zutat speichern</button>
                 </form>
         </section>
             
      <form method="GET" action="http://localhost:3001" >
-        <input type="submit" value="Startseite" style="width: 320px; height:40px"/>
+        <input type="submit" value="Fertig zur Startseite" style="width: 320px; height:40px"/>
     </form>
 
   </body>
