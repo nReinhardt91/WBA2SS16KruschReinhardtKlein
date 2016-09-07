@@ -5,8 +5,22 @@
 
 <head>
   <meta charset="UTF-8"/>
-
     <link rel="stylesheet" type="text/css" href="/css/style.css"> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $("#zutatenInListe").submit(function(event) {
+            event.preventDefault();
+            var id=<%= rezept.id%>;
+            
+            $("#liste").children('li').each(function(index, value){
+           alert($(this).html());
+            });
+        });
+    });
+    </script>
 </head>
 
 <body>
@@ -25,10 +39,10 @@
     <table>
     <tr><td> Zutaten:</td>
         <td>
-    <ul>
+    <ul id="liste">
         <% for(var i=0; i<zutatenliste.length; i++) {%>
         <li> <%= zutatenliste[i] %></li>
-        <% } %>
+        <% } %><br>
     </ul>
         </td>
         </tr>
@@ -41,6 +55,10 @@
             <td> <%= rezept.level%></td>
         </tr>
     </table>
+    <form id="zutatenInListe">
+        <button type="submit" style="width: 320px; height:40px">Zutaten in Liste 1 speichern</button>
+    </form>
+    
     <form method="POST" action="http://localhost:3001/rezepte/<%= rezept.id%>" >
         <input type="submit" value="löschen" style="width: 200px; height:40px"/>
     </form>

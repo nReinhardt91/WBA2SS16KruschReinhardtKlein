@@ -168,7 +168,7 @@ app.get('/neuesRezept', function(req, res){
         res.end();
     });
 });
-
+//jetzt überflüssig, da Rezept auf einer Seite mit Zutaten angelegt wird
 app.get('/rezepte/:id/zutatenliste', function(req, res){
 	fs.readFile('./views/addZutatenliste.ejs', function(err, page) {
         res.writeHead(200, {'Content-Type': 'text/html'});

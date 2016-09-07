@@ -11,7 +11,8 @@
         $("#addRezept").submit(function(event) {
           event.preventDefault();
           $("#zutatenid").show();
-        
+
+$("#rezeptspeichern").hide();
           var newRezept = {
             name: $("#name").val(),
             zubereitung: $("#zubereitung").val(),
@@ -51,6 +52,8 @@
                 contentType: "application/json; charset=utf-8",               
                 success: function(data){ 
                     alert("Zutat hinzugefügt");
+                    //Text wieder aus Eingabe entfernen
+                    $("#zutat").val('');
                 },
                 failure: function(e){alert("fehler");}                      
                 });
@@ -64,21 +67,21 @@
       <hr>
         <form id="addRezept" enctype="application/x-www-form-urlencoded">
            <p><u>Rezeptname:</u></p>
-            <input type="text" id="name" name="name" required></br>
+            <input type="text" id="name" name="name" style="width: 320px; height:40px" required></br>
             <p><u>Zubereitung:</u></p>
-            <textarea id="zubereitung"  name="zubereitung" rows="2" cols="30" required></textarea>
+            <textarea id="zubereitung"  name="zubereitung" style="width: 320px; height:40px"></textarea>
             <p><u>Level:</u></p>
             <input type="radio" class="level" name="level" value="1" />1 <br>
             <input type="radio" class="level" name="level" value="2" />2 <br>
             <input type="radio" class="level" name="level" value="3" />3 <br><br> 
-            <button type="submit" style="width: 320px; height:40px">Rezept speichern</button>
-        </form><br>
+            <button id ="rezeptspeichern" type="submit" style="width: 320px; height:40px">Rezept speichern</button>
+        </form>
         <section id="zutatenid" style="display:none">
                 <form id="addZutatenliste" enctype="application/x-www-form-urlencoded">
                 <div id="id"> ID: <textarea id="rezeptID"  name="rezeptNummer" rows="1" cols="1"></textarea> </div>
                 <p>Zutat hinzufügen:</p>
                 <textarea id="zutat"  name="zutat" rows="2" cols="30"></textarea>
-                <br><br>
+                <br>
                 <button type="submit" style="width: 320px; height:40px">Zutat speichern</button>
                 </form>
         </section>
