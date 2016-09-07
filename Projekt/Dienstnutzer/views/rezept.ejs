@@ -13,13 +13,52 @@
     $(document).ready(function(){
         $("#zutatenInListe").submit(function(event) {
             event.preventDefault();
-            var id=<%= rezept.id%>;
-            
-            $("#liste").children('li').each(function(index, value){
-           alert($(this).html());
-            });
+            //var id=<%= rezept.id%>;
+            $("#namenEinkaufslisten").show();
+            $("#zutatenInListe").hide();
+            $.ajax({
+                type: 'GET',
+                host: 'localhost',
+                port: 3001,
+                url: '/wgs/1/einkaufsliste',
+            }).done(function(data){
+                // alert(":"+data);
+                $(data).find("li").each(function(index, value){
+                    var neueZutat=$(this).html();
+                    $('#einkaufslistenID').append("<input type='radio' class='auswahl' name='auswahl' value="+ neueZutat[52]+">"+ neueZutat[52] + "<br>");
+                   // alert("test:"+neueZutat[52]);
+                });               
+            }); 
         });
     });
+        
+    $(document).ready(function(){
+        $('#namenEinkaufslisten').submit(function(event) {
+            event.preventDefault();
+            var nummer = {
+            zahl: $(".auswahl:checked").val()
+          };
+            $("#liste").children('li').each(function(index, value){
+                
+                //Formatierung noch blöd
+                var neueZutat=$(this).html();
+                $.ajax({
+                    type: 'PUT',
+                    host: 'localhost',
+                    port: 3001,
+                    url: '/wgs/1/einkaufsliste/'+nummer.zahl ,
+                    data: neueZutat,                                 
+                    failure: function(e){alert("fehler");}                      
+                });   
+            });
+            alert("Liste wurde hinzugefügt");
+            $("#namenEinkaufslisten").hide();
+            $("#zutatenInListe").show();
+        });
+        
+    });
+            /*   */
+        
     </script>
 </head>
 
@@ -55,20 +94,27 @@
             <td> <%= rezept.level%></td>
         </tr>
     </table>
-    <form id="zutatenInListe">
-        <button type="submit" style="width: 320px; height:40px">Zutaten in Liste 1 speichern</button>
+    <br>
+    <form id="namenEinkaufslisten" style="display:none">
+      <u>  Zu welcher Liste sollen die Zutaten hinzugefügt werden? <br> </u> 
+     <ul id="einkaufslistenID">
+         
+     </ul>
+    <input type="submit" id="nummer" value="ausgewählt" style="width: 320px; height:40px"/>
     </form>
-    
+    <form id="zutatenInListe">
+        <button type="submit" style="width: 320px; height:40px">Zutaten in Einkaufsliste speichern</button>
+    </form>
     <form method="POST" action="http://localhost:3001/rezepte/<%= rezept.id%>" >
-        <input type="submit" value="löschen" style="width: 200px; height:40px"/>
+        <input type="submit" value="löschen" style="width: 320px; height:40px"/>
     </form>
 
     <form method="GET" action="http://localhost:3001/rezepte" >
-        <input type="submit" value="zurück zu allen Rezepten" style="width: 200px; height:40px" />
+        <input type="submit" value="zurück zu allen Rezepten" style="width: 320px; height:40px" />
     </form>
 
      <form method="GET" action="http://localhost:3001" >
-        <input type="submit" value="zurück zur Startseite" style="width: 200px; height:40px"/>
+        <input type="submit" value="zurück zur Startseite" style="width: 320px; height:40px"/>
     </form>
 
 <div class="fb-share-button" data-href="http://www.medieninformatik.th-koeln.de/website/general/startseite/startseite_527/de/de_startseite_articl_1.php" data-layout="button" data-size="large" data-mobile-iframe="true">
